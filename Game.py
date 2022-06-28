@@ -1,4 +1,8 @@
+from turtle import width
 from unittest import main
+import colorama
+from colorama import Fore, Back, Style
+colorama.init(autoreset = True)
 
 
 class Game():
@@ -14,11 +18,14 @@ class Game():
     self.__board = []
 
   def gamemodeOption(self):
-      option = input("Please enter a mode (t: terminal or g: gui)")
+      option = input("Please enter a mode (t: terminal or g: gui) ")
       if option == "t":
         self.setupBoard()
       elif option == "g":
         pass
+      else:
+        print(Fore.RED + 'No mode was entered')
+        self.gamemodeOption()
 
   def setupBoard(self):
     for count in range(0, Game.HEIGHT):
@@ -31,15 +38,6 @@ class Game():
       print(*self.__board[i], sep = " ")
       print(" ")
 
-  #validatecolumn
-  #turncounter
-  #validatemove
-  #move
-  #list of valid cols
-
-  def validColumns(self):
-    pass
-
   def makeMove(self, column):
     column -= 1
     if self.validateMove(column) == True:
@@ -49,16 +47,49 @@ class Game():
             self.turnCounter()
             self.displayBoard()
             return
-    return "Move invalid"
+    print(Fore.RED + "Move invalid")
+    return
 
   def validateMove(self, column):
-    if self.__board[0][column] != ".":
-      return False
-    return True
+    if column >= 0 and column < 7:
+      if self.__board[0][column] != ".":
+        return False
+      return True
+    return False
 
   def turnCounter(self):
     self.__playerTurn = 3 - self.__playerTurn
+    if self.__playerTurn == 1:
+      print(Back.RED + "Player 1's Turn: ")
+    else:
+      print(Back.YELLOW + "Player 2's Turn: ")
     return self.__playerTurn
+
+  def checkWin(self):
+    piece = "R" if self.__playerTurn == 1 else "Y"
+    for column in range(Game.WIDTH - 3):
+      for row in range(Game.HEIGHT):
+        if self.__board[row][column] == piece and self.__board[row][column + 1] == piece and self.__board[row][column + 2] == piece and self.__board[row][column + 3] == piece:
+          return True
+        return False
+
+    '''for column in range(Game.WIDTH):
+      for row in range(Game.HEIGHT - 3):
+        if self.__board[row][column] == piece and self.__board[row + 1][column] == piece and self.__board[row + 2][column] == piece and self.__board[row + 3][column] == piece:
+          return True
+        return False
+
+    for column in range(Game.WIDTH - 3):
+      for row in range(Game.HEIGHT - 3):
+        if self.__board[row][column] == piece and self.__board[row + 1][column + 1] == piece and self.__board[row + 2][column + 2] == piece and self.__board[row + 3][column + 3] == piece:
+          return True
+        return False
+
+    for column in range(Game.WIDTH - 3):
+      for row in range(3, Game.HEIGHT):
+        if self.__board[row][column] == piece and self.__board[row - 1][column + 1] == piece and self.__board[row - 2][column + 2] == piece and self.__board[row - 3][column + 3] == piece:
+          return True
+        return False'''
 
   def validateBoard(self):
     red = 0
@@ -76,9 +107,6 @@ class Game():
       return False
     return True
 
-  def winner(self):
-    return False
-
 class Player():
   def __init__(self, name):
     self.__name = name
@@ -86,6 +114,7 @@ class Player():
 if __name__ == "__main__":
   game = Game()
   game.gamemodeOption()
-  while game.winner() == False:
+  while game.checkWin() == False:
     move = int(input("Make a move: "))
     game.makeMove(move)
+  print("The winner is:")
