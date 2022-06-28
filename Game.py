@@ -4,39 +4,32 @@ from unittest import main
 class Game():
 
   EMPTY = "."
+  HEIGHT = 6
+  WIDTH = 7
 
   def __init__(self):
     self.__player1 = Player("Player 1")
     self.__player2 = Player("Player 2")
+    self.__playerTurn = 1
     self.__board = []
 
   def gamemodeOption(self):
       option = input("Please enter a mode (t: terminal or g: gui)")
       if option == "t":
         self.setupBoard()
-        self.displayBoard()
       elif option == "g":
         pass
 
-
-
   def setupBoard(self):
-    for count in range(0, 6):
-      row = [Game.EMPTY] * 7
+    for count in range(0, Game.HEIGHT):
+      row = [Game.EMPTY] * Game.WIDTH
       self.__board.append(row)
-    print(self.__board)
-    
-    '''for i in range(6):
-      print("")
-      for j in range(7):
-        print(self.__board[i][j])'''
+    print(*self.__board, sep = "\n")
 
   def displayBoard(self):
-    """print(*self.__board, sep = "\n")"""
-    for i in range(6):
-      print("")
-      for j in range(7):
-        print(self.__board[i][j])
+    for i in range(Game.HEIGHT):
+      print(*self.__board[i], sep = " ")
+      print(" ")
 
   #validatecolumn
   #turncounter
@@ -47,14 +40,25 @@ class Game():
   def validColumns(self):
     pass
 
-  def makeMove(self):
-    pass
+  def makeMove(self, column):
+    column -= 1
+    if self.validateMove(column) == True:
+        for row in range(Game.HEIGHT - 1, -1, -1):
+          if self.__board[row][column] == ".":
+            self.__board[row][column] = "R" if self.__playerTurn == 1 else "Y"
+            self.turnCounter()
+            self.displayBoard()
+            return
+    return "Move invalid"
 
-  def validateMove(self):
-    pass
+  def validateMove(self, column):
+    if self.__board[0][column] != ".":
+      return False
+    return True
 
   def turnCounter(self):
-    pass
+    self.__playerTurn = 3 - self.__playerTurn
+    return self.__playerTurn
 
   def validateBoard(self):
     red = 0
@@ -72,10 +76,16 @@ class Game():
       return False
     return True
 
+  def winner(self):
+    return False
+
 class Player():
   def __init__(self, name):
     self.__name = name
 
 if __name__ == "__main__":
   game = Game()
-  game.setupBoard()
+  game.gamemodeOption()
+  while game.winner() == False:
+    move = int(input("Make a move: "))
+    game.makeMove(move)
