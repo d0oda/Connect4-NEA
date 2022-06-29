@@ -1,5 +1,3 @@
-from turtle import width
-from unittest import main
 import colorama
 from colorama import Fore, Back, Style
 colorama.init(autoreset = True)
@@ -31,7 +29,6 @@ class Game():
     for count in range(0, Game.HEIGHT):
       row = [Game.EMPTY] * Game.WIDTH
       self.__board.append(row)
-    print(*self.__board, sep = "\n")
 
   def displayBoard(self):
     for i in range(Game.HEIGHT):
@@ -67,29 +64,29 @@ class Game():
 
   def checkWin(self):
     piece = "R" if self.__playerTurn == 1 else "Y"
-    for column in range(Game.WIDTH - 3):
-      for row in range(Game.HEIGHT):
+    for row in range(Game.HEIGHT):
+      for column in range(Game.WIDTH - 3):
         if self.__board[row][column] == piece and self.__board[row][column + 1] == piece and self.__board[row][column + 2] == piece and self.__board[row][column + 3] == piece:
           return True
-        return False
+      return False
 
-    '''for column in range(Game.WIDTH):
+    for column in range(Game.WIDTH):
       for row in range(Game.HEIGHT - 3):
         if self.__board[row][column] == piece and self.__board[row + 1][column] == piece and self.__board[row + 2][column] == piece and self.__board[row + 3][column] == piece:
           return True
-        return False
+      return False
 
     for column in range(Game.WIDTH - 3):
       for row in range(Game.HEIGHT - 3):
         if self.__board[row][column] == piece and self.__board[row + 1][column + 1] == piece and self.__board[row + 2][column + 2] == piece and self.__board[row + 3][column + 3] == piece:
           return True
-        return False
+      return False
 
     for column in range(Game.WIDTH - 3):
       for row in range(3, Game.HEIGHT):
         if self.__board[row][column] == piece and self.__board[row - 1][column + 1] == piece and self.__board[row - 2][column + 2] == piece and self.__board[row - 3][column + 3] == piece:
           return True
-        return False'''
+      return False
 
   def validateBoard(self):
     red = 0
@@ -114,7 +111,9 @@ class Player():
 if __name__ == "__main__":
   game = Game()
   game.gamemodeOption()
-  while game.checkWin() == False:
+  while True:
     move = int(input("Make a move: "))
     game.makeMove(move)
-  print("The winner is:")
+    if game.checkWin():
+      print("The winner is:")
+      break
