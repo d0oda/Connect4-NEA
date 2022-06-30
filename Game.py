@@ -84,21 +84,21 @@ class Game():
 
     return False
 
-  def validateBoard(self):
+  def checkDraw(self):
     red = 0
     yellow = 0
     empty = 0
-    for i in board:
-        for j in i:
-            if board[j] == "R":
-                red += 1
-            elif board[j] == "Y":
-                yellow += 1
-            else:
-                empty += 1
-    if(yellow == 42 or red == 42):
-      return False
-    return True
+    for i in self.__board:
+      for j in i:
+        if j == "R":
+          red += 1
+        elif j == "Y":
+          yellow += 1
+        else:
+          empty += 1
+    if(yellow == 21 and red == 21):
+      return True
+    return False
 
 class Player():
   def __init__(self, name):
@@ -115,5 +115,8 @@ if __name__ == "__main__":
     game.displayBoard()
     if game.checkWin():
       print("The winner is:")
+      break
+    if game.checkDraw():
+      print("Game Drawn")
       break
     game.turnCounter()
