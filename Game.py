@@ -16,14 +16,23 @@ class Game():
     self.__board = []
 
   def gamemodeOption(self):
-      option = input("Please enter a mode (t: terminal or g: gui) ")
-      if option == "t":
-        self.setupBoard()
-      elif option == "g":
-        pass
-      else:
-        print(Fore.RED + 'No mode was entered')
-        self.gamemodeOption()
+    option = input("Please enter a mode (t: terminal or g: gui) ")
+    if option == "t":
+      self.setupBoard()
+    elif option == "g":
+      pass
+    else:
+      print(Fore.RED + 'No mode was entered')
+      self.gamemodeOption()
+
+  def playAgain(self):
+    option = input("Do you want to play again? (ng: new game or e: exit) ")
+    if option == "ng":
+      return True
+    elif option == "e":
+      return False
+    print(Fore.RED + 'No mode was entered')
+    self.playAgain()
 
   def setupBoard(self):
     for count in range(0, Game.HEIGHT):
@@ -105,18 +114,21 @@ class Player():
     self.__name = name
 
 if __name__ == "__main__":
-  game = Game()
-  game.gamemodeOption()
-  game.displayBoard()
   while True:
-    game.displayTurn()
-    move = int(input("Make a move: "))
-    game.placeMove(move)
+    game = Game()
+    game.gamemodeOption()
     game.displayBoard()
-    if game.checkWin():
-      print("The winner is:")
+    while True:
+      game.displayTurn()
+      move = int(input("Make a move: "))
+      game.placeMove(move)
+      game.displayBoard()
+      if game.checkWin():
+        print(Back.BLUE + "The winner is:")
+        break
+      if game.checkDraw():
+        print(Fore.GREEN + "Game Drawn")
+        break
+      game.turnCounter()
+    if not game.playAgain():
       break
-    if game.checkDraw():
-      print("Game Drawn")
-      break
-    game.turnCounter()
