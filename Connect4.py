@@ -22,7 +22,7 @@ def gamemodeOption():
         if not ui.playAgain():
             break
     elif option == "g":
-      pass
+      ui = GUI()
     else:
       gamemodeOption()
 
