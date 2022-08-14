@@ -23,6 +23,7 @@ def gamemodeOption():
             break
     elif option == "g":
       ui = GUI()
+
     else:
       gamemodeOption()
 
