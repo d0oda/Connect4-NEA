@@ -17,10 +17,7 @@ def gamemodeOption():
         if ui.checkDraw():
             print(Fore.GREEN + "Game Drawn")
             break
-        ui.turnCounter()
         print(ui.YELLOWS, ui.REDS)
-        if not ui.playAgain():
-            break
     elif option == "g":
       ui = GUI()
 

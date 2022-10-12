@@ -1,29 +1,17 @@
-import colorama
-from colorama import Fore, Back, Style
-colorama.init(autoreset = True)
-
+from colorama import Fore, Back
 
 class Game():
-
   EMPTY = "."
   HEIGHT = 6
   WIDTH = 7
-
+  REDS = 0
+  YELLOWS = 0
+  #EMPTY = " "
+  
   def __init__(self):
-    self.__player1 = Player("Player 1")
-    self.__player2 = Player("Player 2")
     self.__playerTurn = 1
-    self.__board = []
-
-  def gamemodeOption(self):
-    option = input("Please enter a mode (t: terminal or g: gui) ")
-    if option == "t":
-      self.setupBoard()
-    elif option == "g":
-      pass
-    else:
-      print(Fore.RED + 'No mode was entered')
-      self.gamemodeOption()
+    self.__board = [[Game.EMPTY for _ in range(Game.WIDTH)] for _ in range(Game.HEIGHT)]
+    #self.__board = []
 
   def playAgain(self):
     option = input("Do you want to play again? (ng: new game or e: exit) ")
@@ -34,40 +22,26 @@ class Game():
     print(Fore.RED + 'No mode was entered')
     self.playAgain()
 
+  def at(self, row, col):
+        row -= 1 #change to 0 based
+        col -= 1
+        return self.__board[row][col]
+
   def setupBoard(self):
     for count in range(0, Game.HEIGHT):
       row = [Game.EMPTY] * Game.WIDTH
       self.__board.append(row)
-
-  def displayBoard(self):
-    for i in range(1, Game.WIDTH + 1, 1):
-      print(i, end = " ")
-    print(" ")
-    for j in range(Game.HEIGHT):
-      print(*self.__board[j], sep = " ")
-      print(" ")
-
-  def placeMove(self, column):
-    column -= 1
-    if self.validateMove(column):
-      for row in range(Game.HEIGHT - 1, -1, -1):
-        if self.__board[row][column] == ".":
-          self.__board[row][column] = "R" if self.__playerTurn == 1 else "Y"
-          return
-    print(Fore.RED + "Move invalid")
 
   def validateMove(self, column):
     return column >= 0 and column < Game.WIDTH and self.__board[0][column] == "."
 
   def turnCounter(self):
     self.__playerTurn = 3 - self.__playerTurn
-    
-  def displayTurn(self):
-    if self.__playerTurn == 1:
-      print(Back.RED + "Player 1's Turn ")
-    else:
-      print(Back.YELLOW + "Player 2's Turn ")
     return self.__playerTurn
+    """if (self.REDS + self.YELLOWS) % 2 == 0:
+      self.__playerTurn = 1
+    else:
+      self.__playerTurn = 2"""
 
   def checkWin(self):
     piece = "R" if self.__playerTurn == 1 else "Y"
@@ -105,30 +79,8 @@ class Game():
           yellow += 1
         else:
           empty += 1
+    self.REDS = red
+    self.YELLOWS = yellow
     if(yellow == 21 and red == 21):
       return True
     return False
-
-class Player():
-  def __init__(self, name):
-    self.__name = name
-
-if __name__ == "__main__":
-  while True:
-    game = Game()
-    game.gamemodeOption()
-    game.displayBoard()
-    while True:
-      game.displayTurn()
-      move = int(input("Make a move: "))
-      game.placeMove(move)
-      game.displayBoard()
-      if game.checkWin():
-        print(Back.BLUE + "The winner is:")
-        break
-      if game.checkDraw():
-        print(Fore.GREEN + "Game Drawn")
-        break
-      game.turnCounter()
-    if not game.playAgain():
-      break
