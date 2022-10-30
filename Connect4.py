@@ -3,21 +3,22 @@ from UI import *
 def gamemodeOption():
     option = input("Please enter a mode (t: terminal or g: gui) ")
     if option == "t":
-      ui = Game()
-      ui.setupBoard()
+      ui = Terminal()
+      game = Game()
+      game.setupBoard()
       ui.displayBoard()
       while True:
         ui.displayTurn()
         move = int(input("Make a move: "))
         ui.placeMove(move)
         ui.displayBoard()
-        if ui.checkWin():
+        if game.checkWin():
             print(Back.BLUE + "The winner is:")
             break
-        if ui.checkDraw():
+        if game.checkDraw():
             print(Fore.GREEN + "Game Drawn")
             break
-        print(ui.YELLOWS, ui.REDS)
+        print(game.YELLOWS, game.REDS)
     elif option == "g":
       ui = GUI()
 

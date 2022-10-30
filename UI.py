@@ -13,34 +13,37 @@ class GameError(Exception):
 
 
 class UI():
+  
+  def __init__(self):
+    self.g = Game()
+    self.b = self.g.board
+    self.EMPTY, self.HEIGHT, self.WIDTH, self.REDS, self.YELLOWS = self.g.getBoardAttribute()
+    self.playerTurn = self.g.playerTurn
   def displayBoard(self):
-    for i in range(1, Game.WIDTH + 1, 1):
+    for i in range(1, self.WIDTH + 1, 1):
       print(i, end = " ")
     print(" ")
-    for j in range(Game.HEIGHT):
-      print(*self.__board[j], sep = " ")
+    for j in range(self.HEIGHT):
+      print(*self.b[j], sep = " ")
       print(" ")
     
   def displayTurn(self):
-    if self.__playerTurn == 1:
+    if self.playerTurn == 1:
       print(Back.RED + "Player 1's Turn ")
     else:
       print(Back.YELLOW + "Player 2's Turn ")
-    return self.__playerTurn
+    return self.playerTurn
 
 
 
-class Terminal(UI):
-  def __init__(self):
-    self.__game = Game()
-
+class Terminal(UI): 
   def placeMove(self, column):
     column -= 1
-    if Game.validateMove(column):
-      for row in range(Game.HEIGHT - 1, -1, -1):
-        if self.__board[row][column] == ".":
-          self.__board[row][column] = "R" if self.__playerTurn == 1 else "Y"
-          Game.turnCounter()
+    if self.g.validateMove(column):
+      for row in range(self.HEIGHT - 1, -1, -1):
+        if self.g.board[row][column] == ".":
+          self.g.board[row][column] = "R" if self.playerTurn == 1 else "Y"
+          self.g.turnCounter()
           return
     print(Fore.RED + "Move invalid")
 
