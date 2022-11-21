@@ -21,9 +21,7 @@ class UI():
 
 
 
-class Terminal(UI): 
-  def ini
-  
+class Terminal(UI):  
   def displayBoard(self, bd):
     for i in range(1, 8, 1):
       print(i, end = " ")
@@ -32,12 +30,12 @@ class Terminal(UI):
       print(*bd[j], sep = " ")
       print(" ")
 
-  def displayTurn(self):
-    if self.g.getPlayerTurn() == 1:
+  def displayTurn(self, t):
+    if t == 1:
       print(Back.RED + "Player 1's Turn ")
     else:
       print(Back.YELLOW + "Player 2's Turn ")
-    return self.g.getPlayerTurn()
+    return t
 
 class GUI(UI):
   def __init__(self):

@@ -9,14 +9,16 @@ def gamemodeOption():
       bg = game.getBoard()
       ui.displayBoard(bg)
       while True:
-        ui.displayTurn()
+        t = game.getPlayerTurn()
+        ui.displayTurn(t)
+        #bg = game.getBoard()
         move = int(input("Make a move: "))
         game.placeMove(move)
         bg = game.getBoard()
-       
         ui.displayBoard(bg)
-        if game.checkWin():
-            print(Back.BLUE + "The winner is:")
+        myWin = game.checkWin()
+        if myWin[0]==5:
+            print(Back.BLUE + "The winner is: ", myWin[1])
             break
         if game.checkDraw():
             print(Fore.GREEN + "Game Drawn")

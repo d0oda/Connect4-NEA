@@ -1,3 +1,4 @@
+import colorama
 from colorama import Fore, Back
 
 class Game():
@@ -7,7 +8,7 @@ class Game():
     self.WIDTH = 7
     self.REDS = 0
     self.YELLOWS = 0
-    self.playerTurn = 2
+    self.playerTurn = 1
     self.board = [[self.EMPTY for _ in range(self.WIDTH)] for _ in range(self.HEIGHT)]
     #self.board = []
     
@@ -54,39 +55,46 @@ class Game():
       self.playerTurn = 2"""
 
   def placeMove(self, column):
-    print("placemove", self.playerTurn)
+    #print("placemove", self.playerTurn)
     column -= 1
     if self.validateMove(column): # move is valid 
       for row in range(self.HEIGHT - 1, -1, -1):
+        #print("*****", row,column)
         if self.board[row][column] == ".":
           print(f"getPlayerTurn: {self.getPlayerTurn, self.getPlayerTurn()}")
           self.board[row][column] = "R" if self.getPlayerTurn() == 1 else "Y"
           turn = self.turnCounter()
-          print(Fore.RED + "Move invalid")
+          break
+    else:
+      print(Fore.RED + "Move invalid")
 
   def checkWin(self):
     piece = "R" if self.playerTurn == 1 else "Y"
     for row in range(self.HEIGHT):
       for column in range(self.WIDTH - 3):
         if self.board[row][column] == piece and self.board[row][column + 1] == piece and self.board[row][column + 2] == piece and self.board[row][column + 3] == piece:
-          return True
+          flag = 5
+          return [flag, piece]
 
     for column in range(self.WIDTH):
       for row in range(self.HEIGHT - 3):
         if self.board[row][column] == piece and self.board[row + 1][column] == piece and self.board[row + 2][column] == piece and self.board[row + 3][column] == piece:
-          return True
+          flag = 5
+          return [flag, piece]
 
     for column in range(self.WIDTH - 3):
       for row in range(self.HEIGHT - 3):
         if self.board[row][column] == piece and self.board[row + 1][column + 1] == piece and self.board[row + 2][column + 2] == piece and self.board[row + 3][column + 3] == piece:
-          return True
+          flag = 5
+          return [flag, piece]
 
     for column in range(self.WIDTH - 3):
       for row in range(3, self.HEIGHT):
         if self.board[row][column] == piece and self.board[row - 1][column + 1] == piece and self.board[row - 2][column + 2] == piece and self.board[row - 3][column + 3] == piece:
-          return True
-
-    return False
+          flag = 5
+          return [flag, piece]
+    flag = 6
+    return [flag, piece]
 
   def checkDraw(self):
     red = 0
