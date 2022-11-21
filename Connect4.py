@@ -6,12 +6,15 @@ def gamemodeOption():
       ui = Terminal()
       game = Game()
       game.setupBoard()
-      ui.displayBoard()
+      bg = game.getBoard()
+      ui.displayBoard(bg)
       while True:
         ui.displayTurn()
         move = int(input("Make a move: "))
-        ui.placeMove(move)
-        ui.displayBoard()
+        game.placeMove(move)
+        bg = game.getBoard()
+       
+        ui.displayBoard(bg)
         if game.checkWin():
             print(Back.BLUE + "The winner is:")
             break

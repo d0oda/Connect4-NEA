@@ -7,12 +7,13 @@ class Game():
     self.WIDTH = 7
     self.REDS = 0
     self.YELLOWS = 0
-    self.playerTurn = 1
+    self.playerTurn = 2
     self.board = [[self.EMPTY for _ in range(self.WIDTH)] for _ in range(self.HEIGHT)]
     #self.board = []
     
 
   def getBoard(self):
+    print(type(self.board))
     return self.board
 
   def getBoardAttribute(self):
@@ -20,6 +21,7 @@ class Game():
 
   def getPlayerTurn(self):
     return self.playerTurn
+    
   def playAgain(self):
     option = input("Do you want to play again? (ng: new game or e: exit) ")
     if option == "ng":
@@ -44,11 +46,23 @@ class Game():
 
   def turnCounter(self):
     self.playerTurn = 3 - self.playerTurn
+    print('******', self.playerTurn)
     return self.playerTurn
     """if (self.REDS + self.YELLOWS) % 2 == 0:
       self.playerTurn = 1
     else:
       self.playerTurn = 2"""
+
+  def placeMove(self, column):
+    print("placemove", self.playerTurn)
+    column -= 1
+    if self.validateMove(column): # move is valid 
+      for row in range(self.HEIGHT - 1, -1, -1):
+        if self.board[row][column] == ".":
+          print(f"getPlayerTurn: {self.getPlayerTurn, self.getPlayerTurn()}")
+          self.board[row][column] = "R" if self.getPlayerTurn() == 1 else "Y"
+          turn = self.turnCounter()
+          print(Fore.RED + "Move invalid")
 
   def checkWin(self):
     piece = "R" if self.playerTurn == 1 else "Y"
