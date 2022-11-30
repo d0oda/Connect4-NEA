@@ -15,6 +15,7 @@ def gamemodeOption():
         move = int(input("Make a move: "))
         game.placeMove(move)
         bg = game.getBoard()
+        
         ui.displayBoard(bg)
         myWin = game.checkWin()
         if myWin[0]==5:

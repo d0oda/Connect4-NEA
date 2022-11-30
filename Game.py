@@ -1,3 +1,4 @@
+import random
 import colorama
 from colorama import Fore, Back
 
@@ -44,6 +45,13 @@ class Game():
 
   def validateMove(self, column):
     return column >= 0 and column < self.WIDTH and self.board[0][column] == "."
+  
+  def getValidColumns(self):
+    availableColumns = []
+    for column in range(0, 7):
+      if self.validateMove(column):
+        availableColumns.append(column)
+    return availableColumns
 
   def turnCounter(self):
     self.playerTurn = 3 - self.playerTurn
@@ -95,6 +103,11 @@ class Game():
           return [flag, piece]
     flag = 6
     return [flag, piece]
+  
+  def isTerminal(self):
+    if self.checkWin[0] == 5 or self.getValidColumns() == []:
+      return True
+    return False
 
   def checkDraw(self):
     red = 0
@@ -113,3 +126,20 @@ class Game():
     if(yellow == 21 and red == 21):
       return True
     return False
+  
+  
+
+
+class Player(Game):
+  pass
+
+class AI(Game):
+  def __init__(self):
+    super.__init__()
+
+  def easyAI(self):
+    av = self.getValidColumns()
+    return random.choice(av)
+
+  def hardAI(self):
+    pass
