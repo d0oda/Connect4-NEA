@@ -10,6 +10,7 @@ def gamemodeOption():
       ui.displayBoard(bg)
       while True:
         t = game.getPlayerTurn()
+        print(game.getValidColumns())
         ui.displayTurn(t)
         #bg = game.getBoard()
         move = int(input("Make a move: "))

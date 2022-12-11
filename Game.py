@@ -1,6 +1,7 @@
 import random
 import colorama
 from colorama import Fore, Back
+import sqlite3
 
 class Game():
   def __init__(self):
@@ -15,7 +16,7 @@ class Game():
     
 
   def getBoard(self):
-    print(type(self.board))
+    #print(type(self.board))
     return self.board
 
   def getBoardAttribute(self):
@@ -141,5 +142,5 @@ class AI(Game):
     av = self.getValidColumns()
     return random.choice(av)
 
-  def hardAI(self):
+  def miniMax(self):
     pass
