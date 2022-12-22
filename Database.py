@@ -30,7 +30,6 @@ class DBMS():
          player1 VARCHAR(50) NOT NULL,
          player2 VARCHAR(50) NOT NULL,
          gameState NOT NULL);''')
-
     c.close()
 
 
@@ -38,9 +37,10 @@ class DBMS():
     c = self.conn.cursor()
     c.execute("""INSERT INTO Users 
         (username, password) 
-        VALUES (?, ?);""")
-
+        VALUES (%s, %s);""")
     c.close()
 
-  def UpdateStats(self):
-    pass
+  def UpdateStats(self, username):
+    c = self.conn.cursor()
+    c.execute("""SELECT * FROM Statistics WHERE username = %s""")
+    c.close()
