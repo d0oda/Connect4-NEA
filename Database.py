@@ -10,6 +10,9 @@ c.execute("CREATE TABLE SavedGames (gameID int PRIMARY KEY, player1 VARCHAR(50),
 class DBMS():
   def __init__(self):
     self.conn = sqlite3.connect("Connect4.db")
+    c = self.conn.cursor()
+    self.existsTable = c.execute("""SELECT name FROM sqlite_master WHERE type='table' AND name='{Users}'""")
+
 
 
   def Createtables(self):
@@ -17,13 +20,14 @@ class DBMS():
     c.execute('''CREATE TABLE Users
          (username VARCHAR(50) PRIMARY KEY NOT NULL,
          password VARCHAR(50) NOT NULL);''')
-
+    # mode could be 1 or 2 for single player and multiplayer
+    # outcome could be 0 for lose, 1 for win and 2 for draw
     c.execute('''CREATE TABLE Statistics
          (statsID INT PRIMARY KEY NOT NULL,
          username VARCHAR(50) NOT NULL,
-         numWins VARCHAR(50) NOT NULL,
-         numLosses VARCHAR(50) NOT NULL,
-         maxWinStreak INT NOT NULL);''')
+         date VARCHAR(100) NOT NULL,
+         mode INT NOT NULL, 
+         outcome INT NOT NULL);''')
 
     c.execute('''CREATE TABLE SavedGames
          (gameID INT PRIMARY KEY NOT NULL,
@@ -35,12 +39,18 @@ class DBMS():
 
   def InsertUser(self, username, password):
     c = self.conn.cursor()
-    c.execute("""INSERT INTO Users 
-        (username, password) 
-        VALUES (%s, %s);""")
+    #c.execute(''' INSERT INTO Users (username, password) VALUES (?, ?) ''')
+    c.execute(f"INSERT INTO Users (username, password) VALUES ({username}, {password})")
+    self.conn.commit()
     c.close()
 
   def UpdateStats(self, username):
     c = self.conn.cursor()
     c.execute("""SELECT * FROM Statistics WHERE username = %s""")
+
     c.close()
+
+if __name__ == '__main__':
+  database = DBMS()
+  database.Createtables()
+  database.InsertUser("fei", "1234")

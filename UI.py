@@ -1,5 +1,5 @@
 from Game import *
-from tkinter import *
+import tkinter as tk
 from itertools import product
 import colorama
 from colorama import Fore, Back
@@ -37,23 +37,41 @@ class Terminal(UI):
       print(Back.YELLOW + "Player 2's Turn ")
     return t
 
+  def signup(self, mode):
+    username = input("Please enter a username: ")
+    password = input("Please enter a password: ")
+    while True:
+      password2 = input("Please repeat your password: ")
+      if password == password2:
+        return username, password
+  
+  def userCreated(self, usr):
+    print(f"User {usr} created successfully")
+
 class GUI(UI):
   def __init__(self):
       self.__game_win = None
-      root = Tk()
-      root.title("Connect 4")
-      Grid.rowconfigure(root,0,weight=1)
-      Grid.columnconfigure(root,0,weight=1)
-      Grid.rowconfigure(root,1,weight=1)
-      Grid.rowconfigure(root,2,weight=1)
+      self.root = tk.Tk()
+      self.root.title("Connect 4")
+      self.root.geometry("500x500")
 
-      helpButton = Button(root, text = "Help", command = self.showHelp)
-      playButton = Button(root, text = "Play", command = self.playGame)
-      quitButton = Button(root, text = "Quit", command = self.quit)
+      self.label = tk.Label(self.root, text="Connect 4")
+      self.label.pack(padx=20, pady=20)
 
-      helpButton.grid(row=0,column=0,sticky="NSEW")
-      playButton.grid(row=1,column=0,sticky="NSEW")
-      quitButton.grid(row=2,column=0,sticky="NSEW")
+      self.buttonFrame = tk.Frame(self.root)
+      self.buttonFrame.columnconfigure(0, weight=1)
+      self.buttonFrame.columnconfigure(1, weight=1)
+      self.buttonFrame.columnconfigure(2, weight=1)
+
+      helpButton = tk.Button(self.buttonFrame, text="Help", command=self.showHelp)
+      playButton = tk.Button(self.buttonFrame, text="Play", command=self.playGame)
+      quitButton = tk.Button(self.buttonFrame, text="Quit", command=self.quit)
+
+      helpButton.grid(row=0, column=0, sticky="NSEW")
+      playButton.grid(row=1, column=0, sticky="NSEW")
+      quitButton.grid(row=2, column=0, sticky="NSEW")
+
+      self.buttonFrame.pack(pady=20)
 
   def showHelp():
     pass
@@ -62,25 +80,34 @@ class GUI(UI):
       if self.__game_win:
         return
       self.__game = Game()
+      self.board = []
       self.__finished = False
+      firstSquareRow = 50
+      firstSquareColumn = 55
+      colPos = firstSquareColumn
+      rowPos = firstSquareRow
 
-      game_win = Toplevel(self.root)
+      game_win = tk.Toplevel(self.root)
       game_win.title("Game")
-      frame = Frame(game_win)
-      frame.grid(row = 0, column = 0)
 
-      Grid.columnconfigure(game_win, 0, weight = 1)
-      Grid.rowconfigure(game_win, 0, weight = 1)
-      frame.grid(row = 0, sticky = N + S + E + W)
-
-      self.__buttons = [[None for _ in range(self.__game.WIDTH + 1)] for _ in range(self.__game.HEIGHT)]
-      for row, col in product(range(self.__game.WIDTH + 1), range(self.__game.HEIGHT)):
-          b = StringVar()
-          b.set(self.__game.at(row+1, col+1))
-          self.__buttons[row][col] = b
+      for x in range(self.__game.HEIGHT):
+        squareList = []
+        for y in range(self.__game.WIDTH):
+          square = tk.Canvas.create_oval(colPos, rowPos, colPos+45, rowPos+45, fill="white", tags=("piece",y))
+          colPos += 55
+          squareList.append(square)
+        rowPos += 50
+        colPos = firstSquareColumn
+        self.board.append(squareList)
+      
+    
 
   def quit():
     pass
 
   def run(self):
       self.__root.mainloop()
+
+  def signup(self):
+    usernameEntry = tk.Entry(self.root)
+    usernameEntry.pack()

@@ -1,6 +1,13 @@
 from UI import *
+from Database import *
 
 def gamemodeOption():
+    database = DBMS()
+    if database.existsTable is None:
+      database.Createtables()
+    else:
+      pass
+    
     option = input("Please enter a mode (t: terminal or g: gui) ")
     if option == "t":
       ui = Terminal()
@@ -8,6 +15,9 @@ def gamemodeOption():
       game.setupBoard()
       bg = game.getBoard()
       ui.displayBoard(bg)
+      '''(usr, psw) = ui.signup()
+      database.InsertUser(username=usr, password=psw)
+      ui.userCreated(usr)'''
       while True:
         t = game.getPlayerTurn()
         print(game.getValidColumns())
