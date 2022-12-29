@@ -11,8 +11,8 @@ class Game():
     self.REDS = 0
     self.YELLOWS = 0
     self.playerTurn = 1
-    self.board = [[self.EMPTY for _ in range(self.WIDTH)] for _ in range(self.HEIGHT)]
-    #self.board = []
+    #self.board = [[self.EMPTY for _ in range(self.WIDTH)] for _ in range(self.HEIGHT)]
+    self.board = []
     
 
   def getBoard(self):

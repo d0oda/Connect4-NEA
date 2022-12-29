@@ -50,63 +50,102 @@ class Terminal(UI):
 
 class GUI(UI):
   def __init__(self):
-      self.__game_win = None
-      self.root = tk.Tk()
-      self.root.title("Connect 4")
-      self.root.geometry("500x500")
+    self.__game_win = None
+    self.root = tk.Tk()
+    self.root.title("Connect 4")
+    self.root.geometry("500x500")
+    self.firstSquareRow = 50
+    self.firstSquareColumn = 55
+    self.game = Game()
 
-      self.label = tk.Label(self.root, text="Connect 4")
-      self.label.pack(padx=20, pady=20)
+    self.label = tk.Label(self.root, text="Connect 4")
+    self.label.pack(padx=20, pady=20)
 
-      self.buttonFrame = tk.Frame(self.root)
-      self.buttonFrame.columnconfigure(0, weight=1)
-      self.buttonFrame.columnconfigure(1, weight=1)
-      self.buttonFrame.columnconfigure(2, weight=1)
+    self.buttonFrame = tk.Frame(self.root)
+    self.buttonFrame.columnconfigure(0, weight=1)
+    self.buttonFrame.columnconfigure(1, weight=1)
+    self.buttonFrame.columnconfigure(2, weight=1)
 
-      helpButton = tk.Button(self.buttonFrame, text="Help", command=self.showHelp)
-      playButton = tk.Button(self.buttonFrame, text="Play", command=self.playGame)
-      quitButton = tk.Button(self.buttonFrame, text="Quit", command=self.quit)
+    helpButton = tk.Button(self.buttonFrame, text="Help", command=self.showHelp)
+    playButton = tk.Button(self.buttonFrame, text="Play", command=self.playGame)
+    quitButton = tk.Button(self.buttonFrame, text="Quit", command=self.quit)
 
-      helpButton.grid(row=0, column=0, sticky="NSEW")
-      playButton.grid(row=1, column=0, sticky="NSEW")
-      quitButton.grid(row=2, column=0, sticky="NSEW")
+    helpButton.grid(row=0, column=0, sticky="NSEW")
+    playButton.grid(row=1, column=0, sticky="NSEW")
+    quitButton.grid(row=2, column=0, sticky="NSEW")
 
-      self.buttonFrame.pack(pady=20)
+    self.buttonFrame.pack(pady=20)
 
   def showHelp():
     pass
 
   def playGame(self):
-      if self.__game_win:
-        return
-      self.__game = Game()
-      self.board = []
-      self.__finished = False
-      firstSquareRow = 50
-      firstSquareColumn = 55
-      colPos = firstSquareColumn
-      rowPos = firstSquareRow
+    """if self.game_win:
+      return"""
+    game_win = tk.Toplevel(self.root)
+    game_win.title("Game")
+    self.setupBoard(game_win)
+    
+    #self.board = []
+    #print(game.board)
+    self.finished = False
 
-      game_win = tk.Toplevel(self.root)
-      game_win.title("Game")
+    while True:
+        t = self.game.getPlayerTurn()
+        print(self.game.getValidColumns())
+        #ui.displayTurn(t) display in console
+        #move = int(input("Make a move: ")) input in GUI
+        game.placeMove(move)
+        bg = game.getBoard()
+        
+        ui.displayBoard(bg)
+        myWin = game.checkWin()
+        if myWin[0]==5:
+            print(Back.BLUE + "The winner is: ", myWin[1])
+            break
+        if self.game.checkDraw():
+            print(Fore.GREEN + "Game Drawn")
+            break
+        print(self.game.YELLOWS, self.game.REDS)
 
-      for x in range(self.__game.HEIGHT):
-        squareList = []
-        for y in range(self.__game.WIDTH):
-          square = tk.Canvas.create_oval(colPos, rowPos, colPos+45, rowPos+45, fill="white", tags=("piece",y))
-          colPos += 55
-          squareList.append(square)
-        rowPos += 50
-        colPos = firstSquareColumn
-        self.board.append(squareList)
+  def setupBoard(self, game_win):
+    self.game.setupBoard()
+    bg = self.game.getBoard()
+    colPos = self.firstSquareColumn
+    rowPos = self.firstSquareRow
+    canvas = tk.Canvas(game_win, width=500, height=500, bg="white")
+    canvas.pack()
+    for x in range(self.game.HEIGHT):
+      squareList = []
+      for y in range(self.game.WIDTH):
+        canvas.create_oval(colPos, rowPos, colPos+45, rowPos+45, fill="white", tags=("piece",y))
+        colPos += 55
+      rowPos += 50
+
+      colPos = self.firstSquareColumn
+      #self.board.append(squareList)
+
+    self.colButtons = tk.Frame(game_win)
+    self.colButtons.columnconfigure(0, weight=1)
+    self.colButtons.columnconfigure(1, weight=1)
+    self.colButtons.columnconfigure(2, weight=1)
+    self.colButtons.columnconfigure(3, weight=1)
+    self.colButtons.columnconfigure(4, weight=1)
+    self.colButtons.columnconfigure(5, weight=1)
+    self.colButtons.columnconfigure(6, weight=1)
+
+    for i in range(7):
+      colButton = tk.Button(self.colButtons, text=i+1)
+      colButton.grid(row=0, column=i, sticky="NSEW")
+
+    self.colButtons.pack(pady=20)
       
+  def quit(self):
+    self.root.destroy()
     
 
-  def quit():
-    pass
-
   def run(self):
-      self.__root.mainloop()
+    self.root.mainloop()
 
   def signup(self):
     usernameEntry = tk.Entry(self.root)
