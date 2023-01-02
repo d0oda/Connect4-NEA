@@ -38,6 +38,7 @@ def gamemodeOption():
         print(game.YELLOWS, game.REDS)
     elif option == "g":
       ui = GUI()
+      
 
 
     else:

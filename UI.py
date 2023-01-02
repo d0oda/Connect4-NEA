@@ -82,9 +82,9 @@ class GUI(UI):
   def playGame(self):
     """if self.game_win:
       return"""
-    game_win = tk.Toplevel(self.root)
-    game_win.title("Game")
-    self.setupBoard(game_win)
+    gameWindow = tk.Toplevel(self.root)
+    gameWindow.title("Game")
+    self.setupBoard(gameWindow)
     
     #self.board = []
     #print(game.board)
@@ -93,12 +93,6 @@ class GUI(UI):
     while True:
         t = self.game.getPlayerTurn()
         print(self.game.getValidColumns())
-        #ui.displayTurn(t) display in console
-        #move = int(input("Make a move: ")) input in GUI
-        game.placeMove(move)
-        bg = game.getBoard()
-        
-        ui.displayBoard(bg)
         myWin = game.checkWin()
         if myWin[0]==5:
             print(Back.BLUE + "The winner is: ", myWin[1])
@@ -108,12 +102,12 @@ class GUI(UI):
             break
         print(self.game.YELLOWS, self.game.REDS)
 
-  def setupBoard(self, game_win):
+  def setupBoard(self, gamewin):
     self.game.setupBoard()
     bg = self.game.getBoard()
     colPos = self.firstSquareColumn
     rowPos = self.firstSquareRow
-    canvas = tk.Canvas(game_win, width=500, height=500, bg="white")
+    canvas = tk.Canvas(gamewin, width=500, height=500, bg="white")
     canvas.pack()
     for x in range(self.game.HEIGHT):
       squareList = []
@@ -123,9 +117,10 @@ class GUI(UI):
       rowPos += 50
 
       colPos = self.firstSquareColumn
-      #self.board.append(squareList)
 
-    self.colButtons = tk.Frame(game_win)
+    canvas.create_text(250, rowPos+70, font="Calibri 20 bold", text=f"Player {self.game.getPlayerTurn()}'s turn")
+
+    self.colButtons = tk.Frame(gamewin)
     self.colButtons.columnconfigure(0, weight=1)
     self.colButtons.columnconfigure(1, weight=1)
     self.colButtons.columnconfigure(2, weight=1)
@@ -138,7 +133,10 @@ class GUI(UI):
       colButton = tk.Button(self.colButtons, text=i+1)
       colButton.grid(row=0, column=i, sticky="NSEW")
 
-    self.colButtons.pack(pady=20)
+    self.colButtons.pack(padx=55, pady=20)
+
+  def colourIn(self):
+    pass
       
   def quit(self):
     self.root.destroy()
