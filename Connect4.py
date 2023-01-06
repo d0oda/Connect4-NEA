@@ -1,6 +1,7 @@
 from UI import *
 from Database import *
 
+
 def gamemodeOption():
     database = DBMS()
     if database.existsTable is None:
@@ -8,7 +9,7 @@ def gamemodeOption():
     else:
       pass
     
-    option = input("Please enter a mode (t: terminal or g: gui) ")
+    option = input("Please enter a mode (t: terminal or g: gui), or quit (q) ")
     if option == "t":
       ui = Terminal()
       game = Game()
@@ -20,7 +21,7 @@ def gamemodeOption():
       ui.userCreated(usr)'''
       while True:
         t = game.getPlayerTurn()
-        print(game.getValidColumns())
+        #print(game.getValidColumns())
         ui.displayTurn(t)
         #bg = game.getBoard()
         move = int(input("Make a move: "))
@@ -35,14 +36,19 @@ def gamemodeOption():
         if game.checkDraw():
             print(Fore.GREEN + "Game Drawn")
             break
-        print(game.YELLOWS, game.REDS)
+        #print(game.YELLOWS, game.REDS)
     elif option == "g":
       ui = GUI()
-      
+    elif option == "q":
+      quit()
 
 
     else:
       gamemodeOption()
+
+
+
+
 
 if __name__ == "__main__":
   while True:

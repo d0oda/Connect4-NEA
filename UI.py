@@ -6,18 +6,14 @@ from colorama import Fore, Back
 colorama.init(autoreset = True)
 
 
-
-class GameError(Exception):
-  pass
-
-
-
 class UI():
   def __init__(self):
     self.g = Game()
     #self.b = self.g.board
     #self.EMPTY, self.HEIGHT, self.WIDTH, self.REDS, self.YELLOWS = self.g.getBoardAttribute()
     #self.playerTurn = self.g.playerTurn
+
+
 
 
 
@@ -30,12 +26,14 @@ class Terminal(UI):
       print(*bd[j], sep = " ")
       print(" ")
 
+
   def displayTurn(self, t):
     if t == 1:
       print(Back.RED + "Player 1's Turn ")
     else:
       print(Back.YELLOW + "Player 2's Turn ")
     return t
+
 
   def signup(self, mode):
     username = input("Please enter a username: ")
@@ -45,8 +43,13 @@ class Terminal(UI):
       if password == password2:
         return username, password
   
+
   def userCreated(self, usr):
     print(f"User {usr} created successfully")
+
+
+
+
 
 class GUI(UI):
   def __init__(self):
@@ -76,8 +79,10 @@ class GUI(UI):
 
     self.buttonFrame.pack(pady=20)
 
+
   def showHelp():
     pass
+
 
   def playGame(self):
     """if self.game_win:
@@ -90,7 +95,7 @@ class GUI(UI):
     #print(game.board)
     self.finished = False
 
-    while True:
+    """while True:
         t = self.game.getPlayerTurn()
         print(self.game.getValidColumns())
         myWin = game.checkWin()
@@ -100,25 +105,39 @@ class GUI(UI):
         if self.game.checkDraw():
             print(Fore.GREEN + "Game Drawn")
             break
-        print(self.game.YELLOWS, self.game.REDS)
+        print(self.game.YELLOWS, self.game.REDS)"""
+
+
+  def colClicked(self, c):
+    try:
+      self.game.placeMove(c)
+      [x,y]=self.game.getPosOfNewPiece()
+      [sc,sr,ec,er] = self.squareDict[x,y]
+      self.canvas.create_oval(sc,sr,ec,er, fill="red", tags=("piece",y))
+    except GameError as e:
+      print(e)
+
 
   def setupBoard(self, gamewin):
+    self.squareDict = {}
     self.game.setupBoard()
     bg = self.game.getBoard()
     colPos = self.firstSquareColumn
     rowPos = self.firstSquareRow
-    canvas = tk.Canvas(gamewin, width=500, height=500, bg="white")
-    canvas.pack()
+    self.canvas = tk.Canvas(gamewin, width=500, height=500, bg="white")
+    self.canvas.pack()
     for x in range(self.game.HEIGHT):
-      squareList = []
       for y in range(self.game.WIDTH):
-        canvas.create_oval(colPos, rowPos, colPos+45, rowPos+45, fill="white", tags=("piece",y))
+        self.canvas.create_oval(colPos, rowPos, colPos+45, rowPos+45, fill="white", tags=("piece",y))
         colPos += 55
+        self.squareDict[x][y]=[colPos,rowPos,colPos+45,rowPos+45]
       rowPos += 50
+      #self.canvas.create_text(colPos, rowPos, font="Calibri 20 bold", text=i+1)
+    
 
       colPos = self.firstSquareColumn
 
-    canvas.create_text(250, rowPos+70, font="Calibri 20 bold", text=f"Player {self.game.getPlayerTurn()}'s turn")
+    self.canvas.create_text(250, rowPos+70, font="Calibri 20 bold", text=f"Player {self.game.getPlayerTurn()}'s turn")
 
     self.colButtons = tk.Frame(gamewin)
     self.colButtons.columnconfigure(0, weight=1)
@@ -131,19 +150,24 @@ class GUI(UI):
 
     for i in range(7):
       colButton = tk.Button(self.colButtons, text=i+1)
+      cmd = lambda c=i: self.colClicked(c)
       colButton.grid(row=0, column=i, sticky="NSEW")
 
-    self.colButtons.pack(padx=55, pady=20)
+    self.colButtons.pack(pady=20)
+
 
   def colourIn(self):
     pass
-      
+
+
   def quit(self):
     self.root.destroy()
+    quit()
     
 
   def run(self):
     self.root.mainloop()
+
 
   def signup(self):
     usernameEntry = tk.Entry(self.root)

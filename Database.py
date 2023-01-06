@@ -7,12 +7,12 @@ c.execute("CREATE TABLE Users (username VARCHAR(50) PRIMARY KEY, password VARCHA
 c.execute("CREATE TABLE Statistics (statsID int PRIMARY KEY, username VARCHAR(50), numWins int, numLosses int, maxWinStreak int)")
 c.execute("CREATE TABLE SavedGames (gameID int PRIMARY KEY, player1 VARCHAR(50), player2 VARCHAR(50), gameState)")"""
 
+
 class DBMS():
   def __init__(self):
     self.conn = sqlite3.connect("Connect4.db")
     c = self.conn.cursor()
     self.existsTable = c.execute("""SELECT name FROM sqlite_master WHERE type='table' AND name='{Users}'""")
-
 
 
   def Createtables(self):
@@ -44,11 +44,16 @@ class DBMS():
     self.conn.commit()
     c.close()
 
+
   def UpdateStats(self, username):
     c = self.conn.cursor()
     c.execute("""SELECT * FROM Statistics WHERE username = %s""")
 
     c.close()
+
+
+
+
 
 if __name__ == '__main__':
   database = DBMS()
