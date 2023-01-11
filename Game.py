@@ -19,6 +19,8 @@ class Game():
     self.REDS = 0
     self.YELLOWS = 0
     self.playerTurn = 1
+    self.x = 0
+    self.y = 0
     #self.board = [[self.EMPTY for _ in range(self.WIDTH)] for _ in range(self.HEIGHT)]
     self.board = []
     
@@ -53,6 +55,12 @@ class Game():
 
 
   def setupBoard(self):
+###########################################################
+#
+# CATEGORY A SKILL: LIST OPERATIONS
+# creating a board through nested lists
+#
+###########################################################
     for count in range(0, self.HEIGHT):
       row = [self.EMPTY] * self.WIDTH
       self.board.append(row)
@@ -94,8 +102,8 @@ class Game():
           turn = self.turnCounter()
           break
     else:
-      #print(Fore.RED + "Move invalid")
-      raise GameError("Move invalid")
+      print(Fore.RED + "Move invalid")
+      #raise GameError("Move invalid")
 
 
   def getPosOfNewPiece(self):
@@ -160,20 +168,22 @@ class Game():
 
 
 class Player():
-  pass
+  def __init__(self, name):
+    self.name = name
+    self.g = Game()
 
 
 
 
 
 class AI(Player):
-  def __init__(self):
-    super.__init__()
+  def __init__(self, name):
+    super.__init__(name)
 
 
   def easyAI(self):
-    av = self.getValidColumns()
-    return random.choice(av)
+    available = self.g.getValidColumns()
+    return random.choice(available)
 
 
   def miniMax(self):

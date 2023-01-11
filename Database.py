@@ -14,6 +14,13 @@ class DBMS():
     c = self.conn.cursor()
     self.existsTable = c.execute("""SELECT name FROM sqlite_master WHERE type='table' AND name='{Users}'""")
 
+###########################################################
+#
+# CATEGORY A SKILL: ADVANCED DATABASE
+# 3 tables are linked through use of
+# foreign key
+#
+###########################################################
 
   def Createtables(self):
     c = self.conn.cursor()
@@ -38,6 +45,13 @@ class DBMS():
 
 
   def InsertUser(self, username, password):
+###########################################################
+#
+# CATEGORY A SKILL: ADVANCED DATABASE
+# use of SQL functions to insert into databases as well as
+# updating existing records
+#
+###########################################################
     c = self.conn.cursor()
     #c.execute(''' INSERT INTO Users (username, password) VALUES (?, ?) ''')
     c.execute(f"INSERT INTO Users (username, password) VALUES ({username}, {password})")

@@ -19,9 +19,12 @@ class UI():
 
 class Terminal(UI):  
   def displayBoard(self, bd):
+    #prints column numbers
     for i in range(1, 8, 1):
       print(i, end = " ")
     print(" ")
+
+    #prints board
     for j in range(6):
       print(*bd[j], sep = " ")
       print(" ")
@@ -53,13 +56,24 @@ class Terminal(UI):
 
 class GUI(UI):
   def __init__(self):
-    self.__game_win = None
+    #self.__game_win = None
     self.root = tk.Tk()
     self.root.title("Connect 4")
     self.root.geometry("500x500")
     self.firstSquareRow = 50
     self.firstSquareColumn = 55
-    self.game = Game()
+    self.COLWIDTH = 55
+    self.ROWHEIGHT = 50
+    self.gameWindow = None
+    super().__init__()
+
+###########################################################
+#
+# CATEGORY A SKILL: ADVANCED OOP
+# Used the super() function to inherit the self.g 
+# attribute from the parent class UI
+#
+###########################################################
 
     self.label = tk.Label(self.root, text="Connect 4")
     self.label.pack(padx=20, pady=20)
@@ -87,9 +101,9 @@ class GUI(UI):
   def playGame(self):
     """if self.game_win:
       return"""
-    gameWindow = tk.Toplevel(self.root)
-    gameWindow.title("Game")
-    self.setupBoard(gameWindow)
+    self.gameWindow = tk.Toplevel(self.root)
+    self.gameWindow.title("Game")
+    self.setupBoard(self.gameWindow)
     
     #self.board = []
     #print(game.board)
@@ -107,37 +121,69 @@ class GUI(UI):
             break
         print(self.game.YELLOWS, self.game.REDS)"""
 
+  def drawBoard(self, gamewin):
+    colPos = self.firstSquareColumn
+    rowPos = self.firstSquareRow
+    board = self.g.getBoard()
+    #self.canvas = tk.Canvas(gamewin, width=500, height=500, bg="white")
+    #self.canvas.pack(fill="both", expand=True)
+    for x in range(self.g.HEIGHT):
+      for y in range(self.g.WIDTH):
+        if board[x][y] == "R":
+          self.canvas.create_oval(colPos, rowPos, colPos+45, rowPos+45, fill="red", tags=("piece",y))
+        elif board[x][y] == "Y":
+          self.canvas.create_oval(colPos, rowPos, colPos+45, rowPos+45, fill="yellow", tags=("piece",y))
+        else:
+          self.canvas.create_oval(colPos, rowPos, colPos+45, rowPos+45, fill="white", tags=("piece",y))
+        colPos += self.COLWIDTH
+        #self.squareDict[x][y]=[colPos,rowPos,colPos+45,rowPos+45]
+      colPos = self.COLWIDTH
+      rowPos += self.ROWHEIGHT
+      #self.canvas.create_text(colPos, rowPos, font="Calibri 20 bold", text=i+1)
 
   def colClicked(self, c):
     try:
-      self.game.placeMove(c)
-      [x,y]=self.game.getPosOfNewPiece()
-      [sc,sr,ec,er] = self.squareDict[x,y]
-      self.canvas.create_oval(sc,sr,ec,er, fill="red", tags=("piece",y))
+      self.g.placeMove(c+1)
+      self.drawBoard(self.gameWindow)
+      myWin = self.g.checkWin()
+      if myWin[0]==5:
+        quit()
+      if self.g.checkDraw():
+        quit()
+
+
+
+  #     [x,y]=self.g.getPosOfNewPiece()
+  #  #   [sc,sr,ec,er] = self.squareDict[x,y]
+  #     sx = c * self.COLWIDTH
+  #     sy = 0 * self.ROWHEIGHT
+  #     ex = (c+1) * self.COLWIDTH
+  #     ey = (c+1) * self.ROWHEIGHT
+  #     self.canvas.create_oval(sc,sr,ec,er, fill="red", tags=("piece",y))
     except GameError as e:
       print(e)
 
 
   def setupBoard(self, gamewin):
-    self.squareDict = {}
-    self.game.setupBoard()
-    bg = self.game.getBoard()
+ #   self.squareDict = {}
+    self.g.setupBoard()
+    bg = self.g.getBoard()
     colPos = self.firstSquareColumn
     rowPos = self.firstSquareRow
     self.canvas = tk.Canvas(gamewin, width=500, height=500, bg="white")
-    self.canvas.pack()
-    for x in range(self.game.HEIGHT):
-      for y in range(self.game.WIDTH):
+    self.canvas.pack(fill="both", expand=True)
+    for x in range(self.g.HEIGHT):
+      for y in range(self.g.WIDTH):
         self.canvas.create_oval(colPos, rowPos, colPos+45, rowPos+45, fill="white", tags=("piece",y))
-        colPos += 55
-        self.squareDict[x][y]=[colPos,rowPos,colPos+45,rowPos+45]
-      rowPos += 50
+        colPos += self.COLWIDTH
+        #self.squareDict[x][y]=[colPos,rowPos,colPos+45,rowPos+45]
+      rowPos += self.ROWHEIGHT
       #self.canvas.create_text(colPos, rowPos, font="Calibri 20 bold", text=i+1)
     
 
       colPos = self.firstSquareColumn
 
-    self.canvas.create_text(250, rowPos+70, font="Calibri 20 bold", text=f"Player {self.game.getPlayerTurn()}'s turn")
+    self.canvas.create_text(250, rowPos+70, font="Calibri 20 bold", text=f"Player {self.g.getPlayerTurn()}'s turn")
 
     self.colButtons = tk.Frame(gamewin)
     self.colButtons.columnconfigure(0, weight=1)
@@ -149,8 +195,8 @@ class GUI(UI):
     self.colButtons.columnconfigure(6, weight=1)
 
     for i in range(7):
-      colButton = tk.Button(self.colButtons, text=i+1)
       cmd = lambda c=i: self.colClicked(c)
+      colButton = tk.Button(self.colButtons, command = cmd, text=i+1)
       colButton.grid(row=0, column=i, sticky="NSEW")
 
     self.colButtons.pack(pady=20)
