@@ -67,12 +67,13 @@ class Game():
 
 
   def validateMove(self, column):
+    print(column)
     return column >= 0 and column < self.WIDTH and self.board[0][column] == "."
   
 
   def getValidColumns(self):
     availableColumns = []
-    for column in range(0, 7):
+    for column in range(0, 6):
       if self.validateMove(column):
         availableColumns.append(column)
     return availableColumns
@@ -114,26 +115,34 @@ class Game():
     piece = "R" if self.playerTurn == 1 else "Y"
     for row in range(self.HEIGHT):
       for column in range(self.WIDTH - 3):
+        #print(row, column)
         if self.board[row][column] == piece and self.board[row][column + 1] == piece and self.board[row][column + 2] == piece and self.board[row][column + 3] == piece:
           flag = 5
+          print(piece, "wins 1")
           return [flag, piece]
 
     for column in range(self.WIDTH):
       for row in range(self.HEIGHT - 3):
         if self.board[row][column] == piece and self.board[row + 1][column] == piece and self.board[row + 2][column] == piece and self.board[row + 3][column] == piece:
           flag = 5
+          print(row, column)
+          print(piece, "wins 2")
           return [flag, piece]
 
     for column in range(self.WIDTH - 3):
       for row in range(self.HEIGHT - 3):
+        #print(row, column)
         if self.board[row][column] == piece and self.board[row + 1][column + 1] == piece and self.board[row + 2][column + 2] == piece and self.board[row + 3][column + 3] == piece:
           flag = 5
+          print(piece, "wins 3")
           return [flag, piece]
 
     for column in range(self.WIDTH - 3):
       for row in range(3, self.HEIGHT):
+        #print(row, column)
         if self.board[row][column] == piece and self.board[row - 1][column + 1] == piece and self.board[row - 2][column + 2] == piece and self.board[row - 3][column + 3] == piece:
           flag = 5
+          print(piece, "wins 4")
           return [flag, piece]
     flag = 6
     return [flag, piece]
@@ -167,19 +176,9 @@ class Game():
 
 
 
-class Player():
-  def __init__(self, name):
-    self.name = name
+class AI():
+  def __init__(self):
     self.g = Game()
-
-
-
-
-
-class AI(Player):
-  def __init__(self, name):
-    super.__init__(name)
-
 
   def easyAI(self):
     available = self.g.getValidColumns()
