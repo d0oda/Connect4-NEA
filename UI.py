@@ -83,13 +83,13 @@ class GUI(UI):
     self.buttonFrame.columnconfigure(1, weight=1)
     self.buttonFrame.columnconfigure(2, weight=1)
 
-    helpButton = tk.Button(self.buttonFrame, text="Help", command=self.showHelp)
-    playButton = tk.Button(self.buttonFrame, text="Play", command=self.playGame)
-    quitButton = tk.Button(self.buttonFrame, text="Quit", command=self.quit)
+    self.helpButton = tk.Button(self.buttonFrame, text="Help", command=self.showHelp)
+    self.playButton = tk.Button(self.buttonFrame, text="Play", command=self.playGame)
+    self.quitButton = tk.Button(self.buttonFrame, text="Quit", command=self.quit)
 
-    helpButton.grid(row=0, column=0, sticky="NSEW")
-    playButton.grid(row=1, column=0, sticky="NSEW")
-    quitButton.grid(row=2, column=0, sticky="NSEW")
+    self.helpButton.grid(row=0, column=0, sticky="NSEW")
+    self.playButton.grid(row=1, column=0, sticky="NSEW")
+    self.quitButton.grid(row=2, column=0, sticky="NSEW")
 
     self.buttonFrame.pack(pady=20)
 
@@ -99,11 +99,12 @@ class GUI(UI):
 
 
   def playGame(self):
+    self.playButton.config(state=tk.DISABLED)
     """if self.game_win:
       return"""
     self.gameWindow = tk.Toplevel(self.root)
     self.gameWindow.title("Game")
-    self.setupBoard(self.gameWindow)
+    self.setupGUIBoard(self.gameWindow)
     
     #self.board = []
     #print(game.board)
@@ -127,6 +128,7 @@ class GUI(UI):
     board = self.g.getBoard()
     #self.canvas = tk.Canvas(gamewin, width=500, height=500, bg="white")
     #self.canvas.pack(fill="both", expand=True)
+    self.turnText = self.canvas.create_text(250, 370, font="Calibri 20 bold", text=f"Player {self.g.getPlayerTurn()}'s turn")
     for x in range(self.g.HEIGHT):
       for y in range(self.g.WIDTH):
         if board[x][y] == "R":
@@ -140,8 +142,12 @@ class GUI(UI):
       colPos = self.COLWIDTH
       rowPos += self.ROWHEIGHT
       #self.canvas.create_text(colPos, rowPos, font="Calibri 20 bold", text=i+1)
+    self.canvas.delete(self.turnText)
+    self.turnText = self.canvas.create_text(250, rowPos+70, font="Calibri 20 bold", text=f"Player {self.g.getPlayerTurn()}'s turn")
+
 
   def colClicked(self, c):
+    rowPos = self.firstSquareRow
     try:
       self.g.placeMove(c+1)
       self.drawBoard(self.gameWindow)
@@ -164,14 +170,14 @@ class GUI(UI):
       print(e)
 
 
-  def setupBoard(self, gamewin):
+  def setupGUIBoard(self, gamewin):
  #   self.squareDict = {}
     self.g.setupBoard()
     bg = self.g.getBoard()
     colPos = self.firstSquareColumn
     rowPos = self.firstSquareRow
     self.canvas = tk.Canvas(gamewin, width=500, height=500, bg="white")
-    self.canvas.pack(fill="both", expand=True)
+    self.canvas.pack(side=tk.TOP, fill="both", expand=True)
     for x in range(self.g.HEIGHT):
       for y in range(self.g.WIDTH):
         self.canvas.create_oval(colPos, rowPos, colPos+45, rowPos+45, fill="white", tags=("piece",y))
@@ -183,7 +189,7 @@ class GUI(UI):
 
       colPos = self.firstSquareColumn
 
-    self.canvas.create_text(250, rowPos+70, font="Calibri 20 bold", text=f"Player {self.g.getPlayerTurn()}'s turn")
+    #self.canvas.create_text(250, rowPos+70, font="Calibri 20 bold", text=f"Player {self.g.getPlayerTurn()}'s turn")
 
     self.colButtons = tk.Frame(gamewin)
     self.colButtons.columnconfigure(0, weight=1)

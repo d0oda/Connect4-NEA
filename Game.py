@@ -23,7 +23,7 @@ class Game():
     self.y = 0
     #self.board = [[self.EMPTY for _ in range(self.WIDTH)] for _ in range(self.HEIGHT)]
     self.board = []
-    
+
 
   def getBoard(self):
     #print(type(self.board))
