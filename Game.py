@@ -68,12 +68,13 @@ class Game():
 
   def validateMove(self, column):
     print(column)
+    print(self.board)
     return column >= 0 and column < self.WIDTH and self.board[0][column] == "."
   
 
   def getValidColumns(self):
     availableColumns = []
-    for column in range(0, 6):
+    for column in range(self.WIDTH):
       if self.validateMove(column):
         availableColumns.append(column)
     return availableColumns
@@ -177,10 +178,11 @@ class Game():
 
 
 class AI():
-  def __init__(self):
-    self.g = Game()
+  def __init__(self,game):
+    self.g = game
 
-  def easyAI(self):
+  def findMove(self):
+
     available = self.g.getValidColumns()
     return random.choice(available)
 

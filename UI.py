@@ -93,10 +93,19 @@ class GUI(UI):
 
     self.buttonFrame.pack(pady=20)
 
+  def clickHelpOnce(self):
+    self.helpButton.config(state=tk.DISABLED)
 
-  def showHelp():
-    pass
+  def showHelp(self):
+    self.helpButton.config(state=tk.DISABLED)
+    self.helpWindow = tk.Toplevel(self.root)
+    self.helpWindow.title("Help")
 
+    self.rules = tk.Label(self.helpWindow, text="1) the red counter plays first, click on any column button to place a counter down to the bottom of that column \n 2) the two players alternate until one player gets 4 of their own colours in a row \n 3) the first person to achieve this wins the game!")
+    self.rules.pack()
+
+    self.closeHelp = tk.Button(self.helpWindow, text="Close", command=self.helpWindow.destroy)
+    self.closeHelp.pack()
 
   def playGame(self):
     self.playButton.config(state=tk.DISABLED)

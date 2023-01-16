@@ -14,7 +14,7 @@ def gamemodeOption():
       players = int(input("1 or 2 human players? "))
       ui = Terminal()
       game = Game()
-      ai = AI()
+      ai = AI(game)
       game.setupBoard()
       bg = game.getBoard()
       ui.displayBoard(bg)
@@ -23,16 +23,19 @@ def gamemodeOption():
       ui.userCreated(usr)'''
       if players == 1:
         while True:
+          #print(f"1 {game.board}")
           t = game.getPlayerTurn()
           ui.displayTurn(t)
+          #print(f"2 {game.board}")
           if t == 1:
             move = int(input("Make a move: "))
           elif t == 2:
-            move = ai.easyAI()
+            move = ai.findMove()
+          #print(f"3 {game.board}")
           game.placeMove(move)
           bg = game.getBoard()
           myWin = game.checkWin()
-          
+          #print(f"4 {game.board}")
           ui.displayBoard(bg)
           if myWin[0]==5:
               print(Back.BLUE + "The winner is: ", myWin[1])
