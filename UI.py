@@ -83,8 +83,8 @@ class GUI(UI):
     self.buttonFrame.columnconfigure(1, weight=1)
     self.buttonFrame.columnconfigure(2, weight=1)
 
-    self.helpButton = tk.Button(self.buttonFrame, text="Help", command=self.showHelp)
-    self.playButton = tk.Button(self.buttonFrame, text="Play", command=self.playGame)
+    self.helpButton = tk.Button(self.buttonFrame, text="Help", command=self.clickHelpOnce)
+    self.playButton = tk.Button(self.buttonFrame, text="Play", command=self.clickPlayOnce)
     self.quitButton = tk.Button(self.buttonFrame, text="Quit", command=self.quit)
 
     self.helpButton.grid(row=0, column=0, sticky="NSEW")
@@ -94,21 +94,42 @@ class GUI(UI):
     self.buttonFrame.pack(pady=20)
 
   def clickHelpOnce(self):
-    self.helpButton.config(state=tk.DISABLED)
+    buttonState = str(self.helpButton["state"])
+    print(buttonState)
+    if buttonState == "normal":
+      print(buttonState)
+      self.showHelp()
+      self.helpButton.config(state=tk.DISABLED)
+    if buttonState == "disabled":
+      print(buttonState)
+      self.helpButton.config(state=tk.NORMAL)
+      self.helpWindow.destroy()
+
+  def clickPlayOnce(self):
+    buttonState = str(self.helpButton["state"])
+    print(buttonState)
+    if buttonState == "normal":
+      print(buttonState)
+      self.playGame()
+      self.playButton.config(state=tk.DISABLED)
+    """if buttonState == "disabled":
+      print(buttonState)
+      self.playButton.config(state=tk.NORMAL)
+      self.gameWindow.destroy()"""
 
   def showHelp(self):
-    self.helpButton.config(state=tk.DISABLED)
+    #self.helpButton.config(state=tk.DISABLED)
     self.helpWindow = tk.Toplevel(self.root)
     self.helpWindow.title("Help")
 
     self.rules = tk.Label(self.helpWindow, text="1) the red counter plays first, click on any column button to place a counter down to the bottom of that column \n 2) the two players alternate until one player gets 4 of their own colours in a row \n 3) the first person to achieve this wins the game!")
     self.rules.pack()
 
-    self.closeHelp = tk.Button(self.helpWindow, text="Close", command=self.helpWindow.destroy)
+    self.closeHelp = tk.Button(self.helpWindow, text="Close", command=self.clickHelpOnce)
     self.closeHelp.pack()
 
   def playGame(self):
-    self.playButton.config(state=tk.DISABLED)
+    #self.playButton.config(state=tk.DISABLED)
     """if self.game_win:
       return"""
     self.gameWindow = tk.Toplevel(self.root)
@@ -137,7 +158,7 @@ class GUI(UI):
     board = self.g.getBoard()
     #self.canvas = tk.Canvas(gamewin, width=500, height=500, bg="white")
     #self.canvas.pack(fill="both", expand=True)
-    self.turnText = self.canvas.create_text(250, 370, font="Calibri 20 bold", text=f"Player {self.g.getPlayerTurn()}'s turn")
+    #self.turnText = self.canvas.create_text(250, 370, font="Calibri 20 bold", text=f"Player {self.g.getPlayerTurn()}'s turn")
     for x in range(self.g.HEIGHT):
       for y in range(self.g.WIDTH):
         if board[x][y] == "R":
@@ -198,7 +219,7 @@ class GUI(UI):
 
       colPos = self.firstSquareColumn
 
-    #self.canvas.create_text(250, rowPos+70, font="Calibri 20 bold", text=f"Player {self.g.getPlayerTurn()}'s turn")
+    self.turnText = self.canvas.create_text(250, rowPos+70, font="Calibri 20 bold", text=f"Player {self.g.getPlayerTurn()}'s turn")
 
     self.colButtons = tk.Frame(gamewin)
     self.colButtons.columnconfigure(0, weight=1)
@@ -211,10 +232,13 @@ class GUI(UI):
 
     for i in range(7):
       cmd = lambda c=i: self.colClicked(c)
-      colButton = tk.Button(self.colButtons, command = cmd, text=i+1)
+      colButton = tk.Button(self.colButtons, command=cmd, text=i+1)
       colButton.grid(row=0, column=i, sticky="NSEW")
 
     self.colButtons.pack(pady=20)
+
+    self.endGameButton = tk.Button(gamewin, command=self.clickPlayOnce, text="Quit")
+    self.endGameButton.pack()
 
 
   def colourIn(self):

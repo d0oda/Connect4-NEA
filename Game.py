@@ -67,8 +67,8 @@ class Game():
 
 
   def validateMove(self, column):
-    print(column)
-    print(self.board)
+    #print(column)
+    #print(self.board)
     return column >= 0 and column < self.WIDTH and self.board[0][column] == "."
   
 
@@ -113,6 +113,7 @@ class Game():
 
 
   def checkWin(self):
+    print(self.board)
     piece = "R" if self.playerTurn == 1 else "Y"
     for row in range(self.HEIGHT):
       for column in range(self.WIDTH - 3):
@@ -149,8 +150,8 @@ class Game():
     return [flag, piece]
   
 
-  def isTerminal(self):
-    if self.checkWin[0] == 5 or self.getValidColumns() == []:
+  def isTerminal(self, board):
+    if self.checkWin(board)[0] == 5 or self.getValidColumns() == []:
       return True
     return False
 
@@ -182,10 +183,13 @@ class AI():
     self.g = game
 
   def findMove(self):
-
     available = self.g.getValidColumns()
     return random.choice(available)
 
 
   def miniMax(self):
-    pass
+    currentState = self.g.getBoard()
+    if self.g.isTerminal(currentState):
+      print("game won")
+      return True
+    print("game going")

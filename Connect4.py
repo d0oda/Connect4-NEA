@@ -53,7 +53,8 @@ def gamemodeOption():
           move = int(input("Make a move: "))
           game.placeMove(move)
           bg = game.getBoard()
-
+          #result = ai.miniMax()
+          #print(result)
           ui.displayBoard(bg)
           myWin = game.checkWin()
           if myWin[0]==5:
