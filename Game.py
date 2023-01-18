@@ -2,7 +2,8 @@ import random
 import colorama
 from colorama import Fore, Back
 import sqlite3
-
+import math
+from copy import copy
 
 class GameError(Exception):
   pass
@@ -89,6 +90,9 @@ class Game():
     else:
       self.playerTurn = 2"""
 
+  def simulateMove(self, board, row, column, piece):
+    board[row][column] = piece
+
 
   def placeMove(self, column):
     self.y = column
@@ -149,7 +153,9 @@ class Game():
     flag = 6
     return [flag, piece]
   
-
+  def boardAttractiveness(self, piece):
+    pass
+  
   def isTerminal(self, board):
     if self.checkWin(board)[0] == 5 or self.getValidColumns() == []:
       return True
@@ -175,6 +181,10 @@ class Game():
     return False
   
 
+  def openRow(self, column, board):
+    for i in range(self.HEIGHT-1, -1, -1):
+      if board[i][column] == ".":
+        return i
 
 
 
@@ -187,9 +197,60 @@ class AI():
     return random.choice(available)
 
 
-  def miniMax(self):
-    currentState = self.g.getBoard()
-    if self.g.isTerminal(currentState):
-      print("game won")
-      return True
-    print("game going")
+  def miniMax(self, board, depth, maximising):
+    alpha = -math.inf
+    beta = math.inf
+    available = self.g.getValidColumns()
+    boardTerm = self.g.isTerminal(board)
+    AIPiece = "Y"
+    PLAYERPiece = "R"
+
+    if depth == 0 or boardTerm:
+      if boardTerm:
+        if self.g.checkWin()[0] == 5 and self.g.checkWin()[1] == AIPiece:
+          return (None, 100000000)
+        elif self.g.checkWin()[0] == 5 and self.g.checkWin()[1] == PLAYERPiece:
+          return (None, -100000000)
+        else:
+          return (None, 0)
+      else:
+        score = self.g.boardAttractiveness(board, AIPiece)
+        return (None, score)
+
+    if maximising is True:
+      boardCopy = board
+      bestScore = -math.inf
+      bestColumn = self.findMove()
+      for c in available:
+        nextOpenRow = self.g.openRow(boardCopy, bestColumn)
+        self.g.simulateMove(boardCopy, nextOpenRow, c, AIPiece)
+        nextScore = self.miniMax(boardCopy, depth -1, False)[1]
+        if nextScore > bestScore:
+          bestScore = nextScore
+          bestColumn = c
+
+        alpha = max(bestScore, alpha)
+        if alpha >= beta:
+          print("AI went crazy")
+          quit()
+
+      return bestColumn, bestScore
+
+    else:
+      boardCopy = board
+      worstScore = math.inf
+      worstColumn = self.findMove()
+      for c in available:
+        nextOpenRow = self.g.openRow(boardCopy, worstColumn)
+        self.g.simulateMove(boardCopy, nextOpenRow, c, PLAYERPiece)
+        nextScore = self.miniMax(boardCopy, depth - 1, True)[1]
+        if nextScore < worstScore:
+          worstScore = nextScore
+          worstColumn = c
+        
+        beta = min(worstScore, beta)
+        if beta <= alpha:
+          print("AI went crazy")
+          quit()
+
+      return worstColumn, worstScore
