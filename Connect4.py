@@ -37,7 +37,7 @@ def gamemodeOption():
           myWin = game.checkWin()
           #print(f"4 {game.board}")
           ui.displayBoard(bg)
-          if myWin[0]==5:
+          if myWin[0]==1:
               print(Back.BLUE + "The winner is: ", myWin[1])
               break
           if game.checkDraw():

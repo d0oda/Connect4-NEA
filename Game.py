@@ -59,7 +59,7 @@ class Game():
 ###########################################################
 #
 # CATEGORY A SKILL: LIST OPERATIONS
-# creating a board through nested lists
+# storing the game board as a 2D array
 #
 ###########################################################
     for count in range(0, self.HEIGHT):
@@ -109,6 +109,7 @@ class Game():
           break
     else:
       print(Fore.RED + "Move invalid")
+      return False
       #raise GameError("Move invalid")
 
 
@@ -118,19 +119,19 @@ class Game():
 
   def checkWin(self):
     print(self.board)
-    piece = "R" if self.playerTurn == 1 else "Y"
+    piece = "R" if self.playerTurn == 2 else "Y"
     for row in range(self.HEIGHT):
       for column in range(self.WIDTH - 3):
         #print(row, column)
         if self.board[row][column] == piece and self.board[row][column + 1] == piece and self.board[row][column + 2] == piece and self.board[row][column + 3] == piece:
-          flag = 5
+          flag = 1
           print(piece, "wins 1")
           return [flag, piece]
 
     for column in range(self.WIDTH):
       for row in range(self.HEIGHT - 3):
         if self.board[row][column] == piece and self.board[row + 1][column] == piece and self.board[row + 2][column] == piece and self.board[row + 3][column] == piece:
-          flag = 5
+          flag = 1
           print(row, column)
           print(piece, "wins 2")
           return [flag, piece]
@@ -139,7 +140,7 @@ class Game():
       for row in range(self.HEIGHT - 3):
         #print(row, column)
         if self.board[row][column] == piece and self.board[row + 1][column + 1] == piece and self.board[row + 2][column + 2] == piece and self.board[row + 3][column + 3] == piece:
-          flag = 5
+          flag = 1
           print(piece, "wins 3")
           return [flag, piece]
 
@@ -147,17 +148,20 @@ class Game():
       for row in range(3, self.HEIGHT):
         #print(row, column)
         if self.board[row][column] == piece and self.board[row - 1][column + 1] == piece and self.board[row - 2][column + 2] == piece and self.board[row - 3][column + 3] == piece:
-          flag = 5
+          flag = 1
           print(piece, "wins 4")
           return [flag, piece]
-    flag = 6
+    flag = 2
     return [flag, piece]
   
-  def boardAttractiveness(self, piece):
-    pass
+  def boardAttractiveness(self, board, piece):
+    eval = 0
+    centreColumn = [int(i) for i in list(board[:,self.WIDTH//2])]
+    pieceNo = centreColumn.count(piece)
+    eval += pieceNo
   
   def isTerminal(self, board):
-    if self.checkWin(board)[0] == 5 or self.getValidColumns() == []:
+    if self.checkWin(board)[0] == 1 or self.getValidColumns() == []:
       return True
     return False
 
@@ -166,11 +170,11 @@ class Game():
     red = 0
     yellow = 0
     empty = 0
-    for i in self.board:
-      for j in i:
-        if j == "R":
+    for row in self.board:
+      for square in row:
+        if square == "R":
           red += 1
-        elif j == "Y":
+        elif square == "Y":
           yellow += 1
         else:
           empty += 1
@@ -196,6 +200,36 @@ class AI():
     available = self.g.getValidColumns()
     return random.choice(available)
 
+  def sortScores(self, eval):
+    if len(eval) > 1:
+      mid = len(eval)//2
+      arr1 = eval[:mid]
+      arr2 = eval[mid:]
+
+      self.sortScores(arr1)
+      self.sortScores(arr2)
+
+      i=j=k=0
+
+      while i < len(arr1) and j < len(arr2):
+        if arr1[i] < arr2[j]:
+          eval[k] = arr1[i]
+          i += 1
+        else:
+          eval[k] = arr2[j]
+          j += 1
+        k += 1
+      
+      while i < len(arr1):
+        eval[k] = arr1[i]
+        i += 1
+        k += 1
+
+      while j < len(arr2):
+        eval[k] = arr2[j]
+        j += 1
+        k += 1
+
 
   def miniMax(self, board, depth, maximising):
     alpha = -math.inf
@@ -207,9 +241,9 @@ class AI():
 
     if depth == 0 or boardTerm:
       if boardTerm:
-        if self.g.checkWin()[0] == 5 and self.g.checkWin()[1] == AIPiece:
+        if self.g.checkWin()[0] == 1 and self.g.checkWin()[1] == AIPiece:
           return (None, 100000000)
-        elif self.g.checkWin()[0] == 5 and self.g.checkWin()[1] == PLAYERPiece:
+        elif self.g.checkWin()[0] == 1 and self.g.checkWin()[1] == PLAYERPiece:
           return (None, -100000000)
         else:
           return (None, 0)
@@ -221,18 +255,23 @@ class AI():
       boardCopy = board
       bestScore = -math.inf
       bestColumn = self.findMove()
+      scoreColumns = []
       for c in available:
         nextOpenRow = self.g.openRow(boardCopy, bestColumn)
         self.g.simulateMove(boardCopy, nextOpenRow, c, AIPiece)
         nextScore = self.miniMax(boardCopy, depth -1, False)[1]
-        if nextScore > bestScore:
-          bestScore = nextScore
-          bestColumn = c
+        scoreColumns.append(nextScore)
 
-        alpha = max(bestScore, alpha)
-        if alpha >= beta:
-          print("AI went crazy")
-          quit()
+      bestScore = self.sortScores(scoreColumns)[-1]
+      alpha = max(bestScore, alpha)
+      if alpha >= beta:
+        print("AI went crazy")
+        quit()
+        """if nextScore > bestScore:
+          bestScore = nextScore
+          bestColumn = c"""
+
+        
 
       return bestColumn, bestScore
 
@@ -240,17 +279,22 @@ class AI():
       boardCopy = board
       worstScore = math.inf
       worstColumn = self.findMove()
+      scoreColumns = []
       for c in available:
         nextOpenRow = self.g.openRow(boardCopy, worstColumn)
         self.g.simulateMove(boardCopy, nextOpenRow, c, PLAYERPiece)
         nextScore = self.miniMax(boardCopy, depth - 1, True)[1]
-        if nextScore < worstScore:
+        scoreColumns.append(nextScore)
+
+      worstScore = self.sortScores(scoreColumns)[0]
+      beta = min(worstScore, beta)
+      if beta <= alpha:
+        print("AI went crazy")
+        quit()
+        """if nextScore < worstScore:
           worstScore = nextScore
-          worstColumn = c
+          worstColumn = c"""
         
-        beta = min(worstScore, beta)
-        if beta <= alpha:
-          print("AI went crazy")
-          quit()
+
 
       return worstColumn, worstScore

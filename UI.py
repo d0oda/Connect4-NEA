@@ -173,19 +173,25 @@ class GUI(UI):
       rowPos += self.ROWHEIGHT
       #self.canvas.create_text(colPos, rowPos, font="Calibri 20 bold", text=i+1)
     self.canvas.delete(self.turnText)
-    self.turnText = self.canvas.create_text(250, rowPos+70, font="Calibri 20 bold", text=f"Player {self.g.getPlayerTurn()}'s turn")
+    self.consoleRow = rowPos + 70
+    self.turnText = self.canvas.create_text(250, self.consoleRow, font="Calibri 20 bold", text=f"Player {self.g.getPlayerTurn()}'s turn")
 
 
   def colClicked(self, c):
     rowPos = self.firstSquareRow
     try:
-      self.g.placeMove(c+1)
+      if self.g.placeMove(c+1) == False:
+        self.canvas.delete(self.turnText)
+        self.turnText = self.canvas.create_text(250, self.consoleRow, font="Calibri 20 bold", text=f"Move Invalid")
+    
       self.drawBoard(self.gameWindow)
       myWin = self.g.checkWin()
-      if myWin[0]==5:
-        quit()
+      if myWin[0]==1:
+        self.canvas.delete(self.turnText)
+        self.turnText = self.canvas.create_text(250, self.consoleRow, font="Calibri 20 bold", text=f"Player {3-self.g.getPlayerTurn()} won")
       if self.g.checkDraw():
-        quit()
+        self.canvas.delete(self.turnText)
+        self.turnText = self.canvas.create_text(250, self.consoleRow, font="Calibri 20 bold", text=f"Game Drawn")
 
 
 
