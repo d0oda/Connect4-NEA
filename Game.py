@@ -154,11 +154,39 @@ class Game():
     flag = 2
     return [flag, piece]
   
-  def boardAttractiveness(self, board, piece):
+  def nInARow(self, n):
+    """for row in range(self.HEIGHT):
+      if self.board"""
+    pass
+
+
+  """def boardAttractiveness(self, board, piece):
     eval = 0
     centreColumn = [int(i) for i in list(board[:,self.WIDTH//2])]
     pieceNo = centreColumn.count(piece)
-    eval += pieceNo
+    eval += pieceNo * 4
+
+    for row in range(self.HEIGHT):
+      for column in range(self.WIDTH - 3):
+        if self.board[row][column] == piece and self.board[row][column + 1] == piece and self.board[row][column + 2] == piece and self.board[row][column + 3] == piece:
+
+
+    for column in range(self.WIDTH):
+      for row in range(self.HEIGHT - 3):
+        if self.board[row][column] == piece and self.board[row + 1][column] == piece and self.board[row + 2][column] == piece and self.board[row + 3][column] == piece:
+
+    for column in range(self.WIDTH - 3):
+      for row in range(self.HEIGHT - 3):
+        #print(row, column)
+        if self.board[row][column] == piece and self.board[row + 1][column + 1] == piece and self.board[row + 2][column + 2] == piece and self.board[row + 3][column + 3] == piece:
+
+    for column in range(self.WIDTH - 3):
+      for row in range(3, self.HEIGHT):
+        #print(row, column)
+        if self.board[row][column] == piece and self.board[row - 1][column + 1] == piece and self.board[row - 2][column + 2] == piece and self.board[row - 3][column + 3] == piece:
+"""
+
+
   
   def isTerminal(self, board):
     if self.checkWin(board)[0] == 1 or self.getValidColumns() == []:

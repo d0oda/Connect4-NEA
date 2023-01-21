@@ -95,27 +95,27 @@ class GUI(UI):
 
   def clickHelpOnce(self):
     buttonState = str(self.helpButton["state"])
-    print(buttonState)
+    #print(buttonState)
     if buttonState == "normal":
-      print(buttonState)
+      #print(buttonState)
       self.showHelp()
       self.helpButton.config(state=tk.DISABLED)
     if buttonState == "disabled":
-      print(buttonState)
+      #print(buttonState)
       self.helpButton.config(state=tk.NORMAL)
       self.helpWindow.destroy()
 
   def clickPlayOnce(self):
-    buttonState = str(self.helpButton["state"])
-    print(buttonState)
+    buttonState = str(self.playButton["state"])
+    #print(buttonState)
     if buttonState == "normal":
-      print(buttonState)
+      #print(buttonState)
       self.playGame()
       self.playButton.config(state=tk.DISABLED)
-    """if buttonState == "disabled":
-      print(buttonState)
+    if buttonState == "disabled":
+      #print(buttonState)
       self.playButton.config(state=tk.NORMAL)
-      self.gameWindow.destroy()"""
+      self.gameWindow.destroy()
 
   def showHelp(self):
     #self.helpButton.config(state=tk.DISABLED)
