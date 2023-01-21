@@ -189,10 +189,11 @@ class GUI(UI):
       if myWin[0]==1:
         self.canvas.delete(self.turnText)
         self.turnText = self.canvas.create_text(250, self.consoleRow, font="Calibri 20 bold", text=f"Player {3-self.g.getPlayerTurn()} won")
+        self.colButtons.destroy()
       if self.g.checkDraw():
         self.canvas.delete(self.turnText)
         self.turnText = self.canvas.create_text(250, self.consoleRow, font="Calibri 20 bold", text=f"Game Drawn")
-
+        self.colButtons.destroy()
 
 
   #     [x,y]=self.g.getPosOfNewPiece()
