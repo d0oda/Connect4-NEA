@@ -118,47 +118,57 @@ class Game():
 
 
   def checkWin(self):
-    print(self.board)
+    #print(self.board)
+    #horizontal check
     piece = "R" if self.playerTurn == 2 else "Y"
     for row in range(self.HEIGHT):
       for column in range(self.WIDTH - 3):
         #print(row, column)
         if self.board[row][column] == piece and self.board[row][column + 1] == piece and self.board[row][column + 2] == piece and self.board[row][column + 3] == piece:
           flag = 1
-          print(piece, "wins 1")
+          #print(piece, "wins 1")
           return [flag, piece]
 
+    #vertical check
     for column in range(self.WIDTH):
       for row in range(self.HEIGHT - 3):
         if self.board[row][column] == piece and self.board[row + 1][column] == piece and self.board[row + 2][column] == piece and self.board[row + 3][column] == piece:
           flag = 1
-          print(row, column)
-          print(piece, "wins 2")
+          #print(row, column)
+          #print(piece, "wins 2")
           return [flag, piece]
 
+    #upward diagonal
     for column in range(self.WIDTH - 3):
       for row in range(self.HEIGHT - 3):
         #print(row, column)
         if self.board[row][column] == piece and self.board[row + 1][column + 1] == piece and self.board[row + 2][column + 2] == piece and self.board[row + 3][column + 3] == piece:
           flag = 1
-          print(piece, "wins 3")
+          #print(piece, "wins 3")
           return [flag, piece]
 
+    #downward diagonal
     for column in range(self.WIDTH - 3):
       for row in range(3, self.HEIGHT):
         #print(row, column)
         if self.board[row][column] == piece and self.board[row - 1][column + 1] == piece and self.board[row - 2][column + 2] == piece and self.board[row - 3][column + 3] == piece:
           flag = 1
-          print(piece, "wins 4")
+          #print(piece, "wins 4")
           return [flag, piece]
     flag = 2
     return [flag, piece]
   
-  def nInARow(self, n):
-    """for row in range(self.HEIGHT):
-      if self.board"""
-    pass
-
+  def consecutivePieces(self, n, piece):
+    sequence = 0
+    for row in range(self.HEIGHT):
+      for col in range(self.WIDTH-n+1):
+        if self.board[row][col:col+n] == [piece for i in range(n)]:
+          sequence += 1
+    
+    for col in range(self.WIDTH):
+      for row in range(self.HEIGHT-n+1):
+        if self.board[row:row+n][col] == [piece for i in range(n)]:
+          sequence += 1
 
   """def boardAttractiveness(self, board, piece):
     eval = 0

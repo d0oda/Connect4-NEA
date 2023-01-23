@@ -8,7 +8,8 @@ colorama.init(autoreset = True)
 
 class UI():
   def __init__(self):
-    self.g = Game()
+    pass
+    #self.g = Game()
     #self.b = self.g.board
     #self.EMPTY, self.HEIGHT, self.WIDTH, self.REDS, self.YELLOWS = self.g.getBoardAttribute()
     #self.playerTurn = self.g.playerTurn
@@ -110,12 +111,16 @@ class GUI(UI):
     #print(buttonState)
     if buttonState == "normal":
       #print(buttonState)
-      self.playGame()
+      self.noPlayers()
       self.playButton.config(state=tk.DISABLED)
     if buttonState == "disabled":
       #print(buttonState)
-      self.playButton.config(state=tk.NORMAL)
-      self.gameWindow.destroy()
+      try:
+        self.gameWindow.destroy()
+        self.choosePlayers.destroy()
+        self.playButton.config(state=tk.NORMAL)
+      except:
+        pass
 
   def showHelp(self):
     #self.helpButton.config(state=tk.DISABLED)
@@ -128,10 +133,14 @@ class GUI(UI):
     self.closeHelp = tk.Button(self.helpWindow, text="Close", command=self.clickHelpOnce)
     self.closeHelp.pack()
 
-  def playGame(self):
+  def playGame(self, aiPlaying):
     #self.playButton.config(state=tk.DISABLED)
     """if self.game_win:
       return"""
+    self.g = Game()
+    self.ai = AI(self.g)
+    self.aiPlaying = aiPlaying
+    self.choosePlayers.destroy()
     self.gameWindow = tk.Toplevel(self.root)
     self.gameWindow.title("Game")
     self.setupGUIBoard(self.gameWindow)
@@ -183,18 +192,25 @@ class GUI(UI):
       if self.g.placeMove(c+1) == False:
         self.canvas.delete(self.turnText)
         self.turnText = self.canvas.create_text(250, self.consoleRow, font="Calibri 20 bold", text=f"Move Invalid")
-    
-      self.drawBoard(self.gameWindow)
-      myWin = self.g.checkWin()
-      if myWin[0]==1:
-        self.canvas.delete(self.turnText)
-        self.turnText = self.canvas.create_text(250, self.consoleRow, font="Calibri 20 bold", text=f"Player {3-self.g.getPlayerTurn()} won")
-        self.colButtons.destroy()
-      if self.g.checkDraw():
-        self.canvas.delete(self.turnText)
-        self.turnText = self.canvas.create_text(250, self.consoleRow, font="Calibri 20 bold", text=f"Game Drawn")
-        self.colButtons.destroy()
+      else:
+        self.drawBoard(self.gameWindow)
+        myWin = self.g.checkWin()
+        if myWin[0]==1:
+          self.canvas.delete(self.turnText)
+          self.turnText = self.canvas.create_text(250, self.consoleRow, font="Calibri 20 bold", text=f"Player {3-self.g.getPlayerTurn()} won")
+          self.colButtons.destroy()
+        if self.g.checkDraw():
+          self.canvas.delete(self.turnText)
+          self.turnText = self.canvas.create_text(250, self.consoleRow, font="Calibri 20 bold", text=f"Game Drawn")
+          self.colButtons.destroy()
 
+    except GameError as e:
+      print(e)
+
+    if self.g.playerTurn == 2 and self.aiPlaying == True and self.g.checkWin()[0] == 2:
+      move = self.ai.findMove()
+      self.g.placeMove(move+1)
+      self.drawBoard(move+1)
 
   #     [x,y]=self.g.getPosOfNewPiece()
   #  #   [sc,sr,ec,er] = self.squareDict[x,y]
@@ -203,8 +219,7 @@ class GUI(UI):
   #     ex = (c+1) * self.COLWIDTH
   #     ey = (c+1) * self.ROWHEIGHT
   #     self.canvas.create_oval(sc,sr,ec,er, fill="red", tags=("piece",y))
-    except GameError as e:
-      print(e)
+    
 
 
   def setupGUIBoard(self, gamewin):
@@ -247,6 +262,25 @@ class GUI(UI):
     self.endGameButton = tk.Button(gamewin, command=self.clickPlayOnce, text="Quit")
     self.endGameButton.pack()
 
+  def noPlayers(self):
+    self.choosePlayers = tk.Toplevel(self.root)
+    self.choosePlayers.title("Game Setup")
+
+    self.playerConfigButtons = tk.Frame(self.choosePlayers)
+    self.playerConfigButtons.rowconfigure(0, weight=1)
+    self.playerConfigButtons.rowconfigure(1, weight=1)
+    self.playerConfigButtons.rowconfigure(2, weight=1)
+
+    self.onePlayer = tk.Button(self.playerConfigButtons, command= lambda a=True:self.playGame(a), text="1 Player")
+    self.onePlayer.grid(row=0, column=0, sticky="NSEW")
+
+    self.twoPlayer = tk.Button(self.playerConfigButtons, command=lambda a=False:self.playGame(a), text="2 Players")
+    self.twoPlayer.grid(row=1, column=0, sticky="NSEW")
+
+    self.cancelButton = tk.Button(self.playerConfigButtons, command=self.clickPlayOnce, text="Cancel")
+    self.cancelButton.grid(row=2, column=0, sticky="NSEW")
+
+    self.playerConfigButtons.pack(pady=20)
 
   def colourIn(self):
     pass
