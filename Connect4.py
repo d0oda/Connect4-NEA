@@ -50,20 +50,28 @@ def gamemodeOption():
           #print(game.getValidColumns())
           ui.displayTurn(t)
           #bg = game.getBoard()
-          move = int(input("Make a move: "))
-          game.placeMove(move)
-          bg = game.getBoard()
-          #result = ai.miniMax()
-          #print(result)
-          ui.displayBoard(bg)
-          myWin = game.checkWin()
-          if myWin[0]==1:
-              print(Back.BLUE + "The winner is: ", myWin[1])
-              break
-          if game.checkDraw():
-              print(Back.GREEN + "Game Drawn")
-              break
-          #print(game.YELLOWS, game.REDS)
+          move = input("Make a move: ")
+         
+          if game.validateMove(move): # it works
+            game.placeMove(int(move))
+            bg = game.getBoard()
+            #result = ai.miniMax()
+            #print(result)
+            ui.displayBoard(bg)
+            myWin = game.checkWin()
+            if myWin[0]==1:
+                print(Back.BLUE + "The winner is: ", myWin[1])
+                break
+            if game.checkDraw():
+                print(Back.GREEN + "Game Drawn")
+                break
+            #print(game.YELLOWS, game.REDS)
+          else:
+            print(Fore.RED + "Move invalid")
+            ui.displayBoard(bg)
+          #game.placeMove(move)
+
+            
     elif option == "g":
       ui = GUI()
 

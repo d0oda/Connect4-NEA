@@ -68,6 +68,10 @@ class Game():
 
 
   def validateMove(self, column):
+    try:
+      column = int(column)
+    except:
+      return False
     #print(column)
     #print(self.board)
     return column >= 0 and column < self.WIDTH and self.board[0][column] == "."
@@ -98,19 +102,19 @@ class Game():
     self.y = column
     #print("placemove", self.playerTurn)
     column -= 1
-    if self.validateMove(column): # move is valid 
-      for row in range(self.HEIGHT - 1, -1, -1):
-        #print("*****", row,column)
-        if self.board[row][column] == ".":
-          print(f"getPlayerTurn: {self.getPlayerTurn, self.getPlayerTurn()}")
-          self.board[row][column] = "R" if self.getPlayerTurn() == 1 else "Y"
-          self.x = row
-          turn = self.turnCounter()
-          break
-    else:
+    #if self.validateMove(column): # move is valid 
+    for row in range(self.HEIGHT - 1, -1, -1):
+      #print("*****", row,column)
+      if self.board[row][column] == ".":
+        #print(f"getPlayerTurn: {self.getPlayerTurn, self.getPlayerTurn()}")
+        self.board[row][column] = "R" if self.getPlayerTurn() == 1 else "Y"
+        self.x = row
+        turn = self.turnCounter()
+        break
+    """else:
       print(Fore.RED + "Move invalid")
       return False
-      #raise GameError("Move invalid")
+      #raise GameError("Move invalid")"""
 
 
   def getPosOfNewPiece(self):
@@ -170,31 +174,32 @@ class Game():
         if self.board[row:row+n][col] == [piece for i in range(n)]:
           sequence += 1
 
-  """def boardAttractiveness(self, board, piece):
+    for col in range(self.WIDTH-n+1):
+      for row in range(self.HEIGHT-n+1):
+        if self.board[row:row+n][col:col+n] == [piece for i in range(n)]:
+          sequence += 1
+
+    for col in range(self.WIDTH-n+1):
+      for row in range(self.HEIGHT):
+        if self.board[row][col:col+n] == [piece for i in range(n)]:
+          sequence += 1
+    
+    return sequence
+
+  def boardAttractiveness(self, board, piece):
     eval = 0
     centreColumn = [int(i) for i in list(board[:,self.WIDTH//2])]
     pieceNo = centreColumn.count(piece)
     eval += pieceNo * 4
 
-    for row in range(self.HEIGHT):
-      for column in range(self.WIDTH - 3):
-        if self.board[row][column] == piece and self.board[row][column + 1] == piece and self.board[row][column + 2] == piece and self.board[row][column + 3] == piece:
-
-
-    for column in range(self.WIDTH):
-      for row in range(self.HEIGHT - 3):
-        if self.board[row][column] == piece and self.board[row + 1][column] == piece and self.board[row + 2][column] == piece and self.board[row + 3][column] == piece:
-
-    for column in range(self.WIDTH - 3):
-      for row in range(self.HEIGHT - 3):
-        #print(row, column)
-        if self.board[row][column] == piece and self.board[row + 1][column + 1] == piece and self.board[row + 2][column + 2] == piece and self.board[row + 3][column + 3] == piece:
-
-    for column in range(self.WIDTH - 3):
-      for row in range(3, self.HEIGHT):
-        #print(row, column)
-        if self.board[row][column] == piece and self.board[row - 1][column + 1] == piece and self.board[row - 2][column + 2] == piece and self.board[row - 3][column + 3] == piece:
-"""
+    for i in range(2,5):
+      noOfSequences = self.consecutivePieces(i, piece)
+      if i == 2:
+        eval += noOfSequences * 2
+      elif i == 3:
+        eval += noOfSequences * 6
+      elif i == 4:
+        eval += 1000000
 
 
   
