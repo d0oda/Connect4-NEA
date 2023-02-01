@@ -3,7 +3,7 @@ import colorama
 from colorama import Fore, Back
 import sqlite3
 import math
-from copy import copy
+from copy import copy, deepcopy
 
 class GameError(Exception):
   pass
@@ -94,8 +94,8 @@ class Game():
     else:
       self.playerTurn = 2"""
 
-  def simulateMove(self, board, row, column, piece):
-    board[row][column] = piece
+  def simulateMove(self, bdr, row, column, piece):
+    bdr[row][column] = piece
 
 
   def placeMove(self, column):
@@ -161,6 +161,48 @@ class Game():
           return [flag, piece]
     flag = 2
     return [flag, piece]
+
+
+  def checkWin_ai(self, b):
+    #print(self.board)
+    #horizontal check
+    piece = "R" if self.playerTurn == 2 else "Y"
+    for row in range(self.HEIGHT):
+      for column in range(self.WIDTH - 3):
+        #print(row, column)
+        if b[row][column] == piece and b[row][column + 1] == piece and b[row][column + 2] == piece and b[row][column + 3] == piece:
+          flag = 1
+          #print(piece, "wins 1")
+          return [flag, piece]
+
+    #vertical check
+    for column in range(self.WIDTH):
+      for row in range(self.HEIGHT - 3):
+        if b[row][column] == piece and b[row + 1][column] == piece and b[row + 2][column] == piece and b[row + 3][column] == piece:
+          flag = 1
+          #print(row, column)
+          #print(piece, "wins 2")
+          return [flag, piece]
+
+    #upward diagonal
+    for column in range(self.WIDTH - 3):
+      for row in range(self.HEIGHT - 3):
+        #print(row, column)
+        if b[row][column] == piece and b[row + 1][column + 1] == piece and b[row + 2][column + 2] == piece and b[row + 3][column + 3] == piece:
+          flag = 1
+          #print(piece, "wins 3")
+          return [flag, piece]
+
+    #downward diagonal
+    for column in range(self.WIDTH - 3):
+      for row in range(3, self.HEIGHT):
+        #print(row, column)
+        if b[row][column] == piece and b[row - 1][column + 1] == piece and b[row - 2][column + 2] == piece and b[row - 3][column + 3] == piece:
+          flag = 1
+          #print(piece, "wins 4")
+          return [flag, piece]
+    flag = 2
+    return [flag, piece]
   
   def consecutivePieces(self, n, piece):
     sequence = 0
@@ -168,9 +210,11 @@ class Game():
       for col in range(self.WIDTH-n+1):
         if self.board[row][col:col+n] == [piece for i in range(n)]:
           sequence += 1
-    
+    #print("This is what we are checking: ", row, col)
+    print(self.board)
     for col in range(self.WIDTH):
       for row in range(self.HEIGHT-n+1):
+        #print("This is what we are checking: ", col, row)
         if self.board[row:row+n][col] == [piece for i in range(n)]:
           sequence += 1
 
@@ -188,11 +232,12 @@ class Game():
 
   def boardAttractiveness(self, board, piece):
     eval = 0
-    centreColumn = [int(i) for i in list(board[:,self.WIDTH//2])]
+    centreColumn = [i for i in board[:][self.WIDTH//2]]
     pieceNo = centreColumn.count(piece)
     eval += pieceNo * 4
 
     for i in range(2,5):
+      print("This is boardAttractiveness i", i)
       noOfSequences = self.consecutivePieces(i, piece)
       if i == 2:
         eval += noOfSequences * 2
@@ -204,7 +249,7 @@ class Game():
 
   
   def isTerminal(self, board):
-    if self.checkWin(board)[0] == 1 or self.getValidColumns() == []:
+    if self.checkWin_ai(board)[0] == 1 or self.getValidColumns() == []:
       return True
     return False
 
@@ -227,9 +272,10 @@ class Game():
       return True
     return False
   
-
+  #checks where the piece will fall in the current column
   def openRow(self, column, board):
     for i in range(self.HEIGHT-1, -1, -1):
+      #print("This is the row number: ", i)
       if board[i][column] == ".":
         return i
 
@@ -284,9 +330,9 @@ class AI():
 
     if depth == 0 or boardTerm:
       if boardTerm:
-        if self.g.checkWin()[0] == 1 and self.g.checkWin()[1] == AIPiece:
+        if self.g.checkWin_ai(board)[0] == 1 and self.g.checkWin_ai(board)[1] == AIPiece:
           return (None, 100000000)
-        elif self.g.checkWin()[0] == 1 and self.g.checkWin()[1] == PLAYERPiece:
+        elif self.g.checkWin_ai(board)[0] == 1 and self.g.checkWin_ai(board)[1] == PLAYERPiece:
           return (None, -100000000)
         else:
           return (None, 0)
@@ -295,15 +341,18 @@ class AI():
         return (None, score)
 
     if maximising is True:
-      boardCopy = board
+      print(board)
+      boardCopy = deepcopy(board)
       bestScore = -math.inf
       bestColumn = self.findMove()
+      #print("Best Column: ", bestColumn)
       scoreColumns = []
       for c in available:
-        nextOpenRow = self.g.openRow(boardCopy, bestColumn)
+        nextOpenRow = self.g.openRow(bestColumn, boardCopy)
         self.g.simulateMove(boardCopy, nextOpenRow, c, AIPiece)
         nextScore = self.miniMax(boardCopy, depth -1, False)[1]
         scoreColumns.append(nextScore)
+      print("Score for columns: ", scoreColumns)
 
       bestScore = self.sortScores(scoreColumns)[-1]
       alpha = max(bestScore, alpha)
@@ -324,7 +373,7 @@ class AI():
       worstColumn = self.findMove()
       scoreColumns = []
       for c in available:
-        nextOpenRow = self.g.openRow(boardCopy, worstColumn)
+        nextOpenRow = self.g.openRow(worstColumn, boardCopy)
         self.g.simulateMove(boardCopy, nextOpenRow, c, PLAYERPiece)
         nextScore = self.miniMax(boardCopy, depth - 1, True)[1]
         scoreColumns.append(nextScore)

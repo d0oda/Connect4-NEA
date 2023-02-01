@@ -30,7 +30,9 @@ def gamemodeOption():
           if t == 1:
             move = int(input("Make a move: "))
           elif t == 2:
-            move = ai.findMove()
+            #move = ai.findMove()
+            move, score = ai.miniMax(bg, 5, True)
+            print(score)
           #print(f"3 {game.board}")
           game.placeMove(move)
           bg = game.getBoard()
