@@ -69,6 +69,8 @@ class Game():
 
   def validateMove(self, column):
     try:
+      if column == None:
+        raise ValueError("empty")
       column = int(column)
     except:
       return False
@@ -211,11 +213,14 @@ class Game():
         if self.board[row][col:col+n] == [piece for i in range(n)]:
           sequence += 1
     #print("This is what we are checking: ", row, col)
-    print(self.board)
+    #print(self.board)
     for col in range(self.WIDTH):
       for row in range(self.HEIGHT-n+1):
         #print("This is what we are checking: ", col, row)
-        if self.board[row:row+n][col] == [piece for i in range(n)]:
+        print(f"this is row {row}, this is row+n {row+n}, this is col {col}")
+        print(self.board)
+        verticalPieces = [r[col] for r in self.board[row:row+n]]
+        if verticalPieces == [piece for i in range(n)]:
           sequence += 1
 
     for col in range(self.WIDTH-n+1):
@@ -298,7 +303,9 @@ class AI():
       self.sortScores(arr1)
       self.sortScores(arr2)
 
-      i=j=k=0
+      i=0
+      j=0
+      k=0
 
       while i < len(arr1) and j < len(arr2):
         if arr1[i] < arr2[j]:
