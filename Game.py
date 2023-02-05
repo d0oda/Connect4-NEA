@@ -249,7 +249,8 @@ class Game():
       elif i == 3:
         eval += noOfSequences * 6
       elif i == 4:
-        eval += 1000000
+        eval += noOfSequences * 1000000
+    return eval
 
 
   
@@ -295,6 +296,7 @@ class AI():
     return random.choice(available)
 
   def sortScores(self, eval):
+    #print(eval)
     if len(eval) > 1:
       mid = len(eval)//2
       arr1 = eval[:mid]
@@ -325,7 +327,12 @@ class AI():
         eval[k] = arr2[j]
         j += 1
         k += 1
+    
+    return eval
 
+    """for i in range(len(eval)):
+        print(eval[i], end=" ")
+    print()"""
 
   def miniMax(self, board, depth, maximising):
     alpha = -math.inf
