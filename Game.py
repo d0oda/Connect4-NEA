@@ -217,8 +217,8 @@ class Game():
     for col in range(self.WIDTH):
       for row in range(self.HEIGHT-n+1):
         #print("This is what we are checking: ", col, row)
-        print(f"this is row {row}, this is row+n {row+n}, this is col {col}")
-        print(self.board)
+        #print(f"this is row {row}, this is row+n {row+n}, this is col {col}")
+        #print(self.board)
         verticalPieces = [r[col] for r in self.board[row:row+n]]
         if verticalPieces == [piece for i in range(n)]:
           sequence += 1
@@ -242,7 +242,7 @@ class Game():
     eval += pieceNo * 4
 
     for i in range(2,5):
-      print("This is boardAttractiveness i", i)
+      #print("This is boardAttractiveness i", i)
       noOfSequences = self.consecutivePieces(i, piece)
       if i == 2:
         eval += noOfSequences * 2
@@ -292,10 +292,25 @@ class AI():
     self.g = game
 
   def findMove(self):
+###########################################################
+#
+# CATEGORY B SKILL: SIMPLE USER DEFINED ALGORITHM
+# The Easy AI checks all columns in the board and chooses 
+# a random one based on which ones contain valid moves 
+#
+###########################################################
     available = self.g.getValidColumns()
     return random.choice(available)
 
   def sortScores(self, eval):
+###########################################################
+#
+# CATEGORY A SKILL: MERGE SORT
+# Used a merge sort algorithm to sort each available move 
+# into ascending order of evaluation, to find the best and 
+# worst moves
+#
+###########################################################
     #print(eval)
     if len(eval) > 1:
       mid = len(eval)//2
@@ -335,6 +350,14 @@ class AI():
     print()"""
 
   def miniMax(self, board, depth, maximising):
+###########################################################
+#
+# CATEGORY A SKILL: RECURSIVE ALGORITHM
+# The minimax algorithm is implemented recursively, as the
+# function repeatedly calls itself to find how attractive 
+# each valid move is.
+#
+###########################################################
     alpha = -math.inf
     beta = math.inf
     available = self.g.getValidColumns()
@@ -355,7 +378,7 @@ class AI():
         return (None, score)
 
     if maximising is True:
-      print(board)
+      #print(board)
       boardCopy = deepcopy(board)
       bestScore = -math.inf
       bestColumn = self.findMove()
@@ -366,10 +389,17 @@ class AI():
         self.g.simulateMove(boardCopy, nextOpenRow, c, AIPiece)
         nextScore = self.miniMax(boardCopy, depth -1, False)[1]
         scoreColumns.append(nextScore)
-      print("Score for columns: ", scoreColumns)
+      #print("Score for columns: ", scoreColumns)
 
       bestScore = self.sortScores(scoreColumns)[-1]
       alpha = max(bestScore, alpha)
+###########################################################
+#
+# CATEGORY A SKILL: OPTIMISATION ALGORITHM
+# Used alpha-beta pruning to reduce the number of moves 
+# that are needed to be checked for the AI 
+#
+###########################################################
       if alpha >= beta:
         print("AI went crazy")
         quit()

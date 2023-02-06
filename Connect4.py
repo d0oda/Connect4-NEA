@@ -12,9 +12,17 @@ def gamemodeOption():
     option = input("Please enter a mode (t: terminal or g: gui), or quit (q) ")
     if option == "t":
       players = int(input("1 or 2 human players? "))
+      difficulty = input("easy, medium, or hard AI? ")
       ui = Terminal()
       game = Game()
       ai = AI(game)
+###########################################################
+#
+# CATEGORY B SKILL: GENERATION OF OBJECTS
+# Game and AI objects are created in order to access the
+# methods created in those respective classes
+#
+###########################################################
       game.setupBoard()
       bg = game.getBoard()
       ui.displayBoard(bg)
@@ -30,9 +38,13 @@ def gamemodeOption():
           if t == 1:
             move = int(input("Make a move: "))
           elif t == 2:
-            #move = ai.findMove()
-            move, score = ai.miniMax(bg, 5, True)
-            print(score)
+            if difficulty == "easy":
+              move = ai.findMove()
+            elif difficulty == "medium":
+              move, score = ai.miniMax(bg, 5, True)
+            elif difficulty == "hard":
+              move, score = ai.miniMax(bg, 5, True)
+            #print(score)
           #print(f"3 {game.board}")
           game.placeMove(move)
           bg = game.getBoard()
