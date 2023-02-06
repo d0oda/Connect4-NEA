@@ -12,7 +12,8 @@ def gamemodeOption():
     option = input("Please enter a mode (t: terminal or g: gui), or quit (q) ")
     if option == "t":
       players = int(input("1 or 2 human players? "))
-      difficulty = input("easy, medium, or hard AI? ")
+      if players == 1:
+        difficulty = input("easy, medium, or hard AI? ")
       ui = Terminal()
       game = Game()
       ai = AI(game)
