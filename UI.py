@@ -118,6 +118,7 @@ class GUI(UI):
       try:
         self.gameWindow.destroy()
         self.choosePlayers.destroy()
+        self.chooseDifficulty.destroy()
         self.playButton.config(state=tk.NORMAL)
       except:
         pass
@@ -133,13 +134,14 @@ class GUI(UI):
     self.closeHelp = tk.Button(self.helpWindow, text="Close", command=self.clickHelpOnce)
     self.closeHelp.pack()
 
-  def playGame(self, aiPlaying):
+  def playGame(self, aiPlaying, aiDifficulty):
     #self.playButton.config(state=tk.DISABLED)
     """if self.game_win:
       return"""
     self.g = Game()
     self.ai = AI(self.g)
     self.aiPlaying = aiPlaying
+    self.aiDifficulty = aiDifficulty
     self.choosePlayers.destroy()
     self.gameWindow = tk.Toplevel(self.root)
     self.gameWindow.title("Game")
@@ -187,6 +189,7 @@ class GUI(UI):
 
 
   def colClicked(self, c):
+    bg = self.g.getBoard()
     rowPos = self.firstSquareRow
     try:
       if self.g.placeMove(c+1) == False:
@@ -208,7 +211,12 @@ class GUI(UI):
       print(e)
 
     if self.g.playerTurn == 2 and self.aiPlaying == True and self.g.checkWin()[0] == 2:
-      move = self.ai.findMove()
+      if self.aiDifficulty == "easy":
+        move = self.ai.findMove()
+      elif self.aiDifficulty == "medium":
+        move, score = self.ai.miniMax(bg, 2, True)
+      elif self.aiDifficulty == "hard":
+        move, score = self.ai.miniMax(bg, 5, True)
       self.g.placeMove(move+1)
       self.drawBoard(move+1)
 
@@ -271,16 +279,40 @@ class GUI(UI):
     self.playerConfigButtons.rowconfigure(1, weight=1)
     self.playerConfigButtons.rowconfigure(2, weight=1)
 
-    self.onePlayer = tk.Button(self.playerConfigButtons, command= lambda a=True:self.playGame(a), text="1 Player")
+    self.onePlayer = tk.Button(self.playerConfigButtons, command= lambda a=True:self.difficulty(a), text="1 Player")
     self.onePlayer.grid(row=0, column=0, sticky="NSEW")
 
-    self.twoPlayer = tk.Button(self.playerConfigButtons, command=lambda a=False:self.playGame(a), text="2 Players")
+    self.twoPlayer = tk.Button(self.playerConfigButtons, command=lambda a=False:self.playGame(a, None), text="2 Players")
     self.twoPlayer.grid(row=1, column=0, sticky="NSEW")
 
     self.cancelButton = tk.Button(self.playerConfigButtons, command=self.clickPlayOnce, text="Cancel")
     self.cancelButton.grid(row=2, column=0, sticky="NSEW")
 
     self.playerConfigButtons.pack(pady=20)
+
+  def difficulty(self, a):
+    self.chooseDifficulty = tk.Toplevel(self.root)
+    self.chooseDifficulty.title("Game Difficulty Select")
+
+    self.difficultyConfigButtons = tk.Frame(self.chooseDifficulty)
+    self.difficultyConfigButtons.rowconfigure(0, weight=1)
+    self.difficultyConfigButtons.rowconfigure(1, weight=1)
+    self.difficultyConfigButtons.rowconfigure(2, weight=1)
+    self.difficultyConfigButtons.rowconfigure(3, weight=1)
+
+    self.easyDifficulty = tk.Button(self.difficultyConfigButtons, command = lambda b="easy":self.playGame(a,b), text="Easy")
+    self.easyDifficulty.grid(row=0, column=0, sticky="NSEW")
+
+    self.mediumDifficulty = tk.Button(self.difficultyConfigButtons, command = lambda b="medium":self.playGame(a,b), text="Medium")
+    self.mediumDifficulty.grid(row=1, column=0, sticky="NSEW")
+
+    self.hardDifficulty = tk.Button(self.difficultyConfigButtons, command = lambda b="hard":self.playGame(a,b), text="Hard")
+    self.hardDifficulty.grid(row=2, column=0, sticky="NSEW")
+
+    self.cancelButton = tk.Button(self.difficultyConfigButtons, command=self.clickPlayOnce, text="Cancel")
+    self.cancelButton.grid(row=3, column=0, sticky="NSEW")
+
+    self.difficultyConfigButtons.pack(pady=20)
 
   def colourIn(self):
     pass
